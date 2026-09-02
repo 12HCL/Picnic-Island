@@ -1,0 +1,40 @@
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| Web routes
+|--------------------------------------------------------------------------
+| Shared file - owned by Faain as repo owner. Only two things belong here:
+| the require lines below, and the authentication routes once BUILD_CONTRACT.md §0
+| is decided.
+|
+| Module routes do NOT go in this file. Put them in your own routes/modules/<you>.php
+| so five people are never editing the same file.
+*/
+
+use Illuminate\Support\Facades\Route;
+
+/*
+| TEMPORARY - scaffold placeholder only.
+|
+| Per BUILD_CONTRACT.md §3, GET / belongs to Safhaan: Content\HomeController@index
+| rendering home.blade.php. Until he writes it, this holding page keeps the app from
+| 404ing on its own front page. Safhaan: delete this block and add the real route to
+| routes/modules/content.php.
+*/
+Route::get('/', function () {
+    return view('scaffold-placeholder');
+})->name('home');
+
+/*
+| Authentication - Faain, after the §0 spike (hand-written Auth::attempt() controllers,
+| not a starter kit). login / logout / register go here, not in a module file, because
+| every module's middleware depends on them.
+*/
+
+// Module route files - one per member. Add nothing here but require lines.
+require __DIR__ . '/modules/admin.php';      // Faain   - Auth, Roles & Admin
+require __DIR__ . '/modules/hotel.php';      // Raafil  - Hotel
+require __DIR__ . '/modules/ferry.php';      // Naayif  - Ferry
+require __DIR__ . '/modules/park.php';       // Malaaz  - Theme Park & Beach
+require __DIR__ . '/modules/content.php';    // Safhaan - Content, Map & Reporting
