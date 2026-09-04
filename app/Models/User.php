@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -63,5 +64,13 @@ class User extends Authenticatable
     public function hasAnyRole(array $roleNames): bool
     {
         return in_array($this->role?->name, $roleNames, true);
+    }
+
+    /**
+     * Hotel bookings placed by this user.
+     */
+    public function hotelBookings(): HasMany
+    {
+        return $this->hasMany(HotelBooking::class);
     }
 }
