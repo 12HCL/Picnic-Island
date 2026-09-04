@@ -7,10 +7,19 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
+/*
+ * role_id is deliberately NOT mass-assignable. It is the column the whole
+ * access-control model rests on, so it is never filled from a request body:
+ * a registration form that passed it through would let anyone sign up as
+ * admin. Set it explicitly on the model instead - in RegisterController
+ * (always the visitor role) and in Admin\UserController (a deliberate
+ * admin action). Factories bypass this by design, so seeders still work.
+ */
+#[Fillable(['name', 'email', 'password', 'phone'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -28,5 +37,31 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * The role assigned to this user.
+     */
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    /**
+     * Determine whether the user has one specific role.
+     */
+    public function hasRole(string $roleName): bool
+    {
+        return $this->role?->name === $roleName;
+    }
+
+    /**
+     * Determine whether the user has any role in the supplied list.
+     *
+     * @param array<int, string> $roleNames
+     */
+    public function hasAnyRole(array $roleNames): bool
+    {
+        return in_array($this->role?->name, $roleNames, true);
     }
 }
