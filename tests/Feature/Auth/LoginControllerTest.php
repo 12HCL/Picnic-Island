@@ -100,6 +100,50 @@ class LoginControllerTest extends TestCase
         $this->assertGuest();
     }
 
+    public function test_deactivated_user_cannot_log_in(): void
+    {
+        $this->seed(RoleSeeder::class);
+
+        $user = User::factory()->role('hotel_staff')->create([
+            'email' => 'retired.staff@example.com',
+            'password' => 'password123',
+            'is_active' => false,
+        ]);
+
+        $response = $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password123',
+        ]);
+
+        $response->assertSessionHasErrors('email');
+        $this->assertGuest();
+    }
+
+    public function test_deactivated_user_sees_the_same_error_as_an_unknown_email(): void
+    {
+        $this->seed(RoleSeeder::class);
+
+        User::factory()->role('hotel_staff')->create([
+            'email' => 'deactivated@example.com',
+            'password' => 'password123',
+            'is_active' => false,
+        ]);
+
+        $expected = 'These credentials do not match our records.';
+
+        // Both must produce the identical message, or the form confirms which
+        // accounts exist and which have merely been switched off.
+        $this->post('/login', [
+            'email' => 'deactivated@example.com',
+            'password' => 'password123',
+        ])->assertSessionHasErrors(['email' => $expected]);
+
+        $this->post('/login', [
+            'email' => 'nobody@example.com',
+            'password' => 'password123',
+        ])->assertSessionHasErrors(['email' => $expected]);
+    }
+
     public function test_user_can_log_out(): void
     {
         $this->seed(RoleSeeder::class);

@@ -19,6 +19,10 @@ use Illuminate\Notifications\Notifiable;
  * admin. Set it explicitly on the model instead - in RegisterController
  * (always the visitor role) and in Admin\UserController (a deliberate
  * admin action). Factories bypass this by design, so seeders still work.
+ *
+ * is_active is excluded for the same reason: a deactivated user must not be able
+ * to reactivate themselves by posting the field back through a profile form. Only
+ * Admin\UserController sets it, per UC-17.
  */
 #[Fillable(['name', 'email', 'password', 'phone'])]
 #[Hidden(['password', 'remember_token'])]
@@ -37,6 +41,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
     }
 

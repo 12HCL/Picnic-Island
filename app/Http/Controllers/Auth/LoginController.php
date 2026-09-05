@@ -21,9 +21,14 @@ class LoginController extends Controller
     {
         $request->ensureIsNotRateLimited();
 
+        // is_active is part of the credentials rather than a check after the fact, so a
+        // deactivated account fails at the query and is never authenticated even briefly.
+        // The error is the same one a wrong password gets, which keeps the form from
+        // confirming that a given address exists - see UC-17 and MASTER_SCHEMA.md §2.
         if (Auth::attempt([
             'email' => $request->string('email')->toString(),
             'password' => $request->string('password')->toString(),
+            'is_active' => true,
         ], $request->boolean('remember'))) {
             $request->clearRateLimit();
             $request->session()->regenerate();
