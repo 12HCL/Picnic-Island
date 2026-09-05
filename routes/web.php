@@ -12,6 +12,7 @@
 | so five people are never editing the same file.
 */
 
+use App\Http\Controllers\Auth\RegisterController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,6 +32,10 @@ Route::get('/', function () {
 | not a starter kit). login / logout / register go here, not in a module file, because
 | every module's middleware depends on them.
 */
+Route::middleware('guest')->group(function () {
+    Route::get('/register', [RegisterController::class, 'create'])->name('register');
+    Route::post('/register', [RegisterController::class, 'store']);
+});
 
 // Module route files - one per member. Add nothing here but require lines.
 require __DIR__ . '/modules/admin.php';      // Faain   - Auth, Roles & Admin
