@@ -45,14 +45,14 @@
                         <span class="navbar-text me-3">{{ auth()->user()->name }}</span>
                     </li>
                     <li class="nav-item">
-                        <form method="POST" action="{{ url('/logout') }}">
+                        <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button class="btn btn-outline-light btn-sm" type="submit">Log out</button>
                         </form>
                     </li>
                 @else
-                    <li class="nav-item"><a class="nav-link" href="{{ url('/login') }}">Log in</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url('/register') }}">Register</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Log in</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('register') }}">Register</a></li>
                 @endauth
             </ul>
         </div>
