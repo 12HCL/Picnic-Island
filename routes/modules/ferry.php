@@ -25,6 +25,22 @@
 | Your routes are listed in BUILD_CONTRACT.md §3 - that table is the contract.
 */
 
+use App\Http\Controllers\Ferry\FerryTicketController;
 use Illuminate\Support\Facades\Route;
 
-// Ali Naayif: your routes go here.
+/*
+| Visitor booking journey. BR-01 is enforced inside the controller, not by withholding
+| the route: a visitor with no hotel booking may reach this page and is refused on it.
+*/
+Route::middleware('auth')->group(function () {
+    Route::get('/ferry/schedules/{schedule}/book', [FerryTicketController::class, 'create'])
+        ->name('ferry.tickets.create');
+});
+
+/*
+| Still to add — BUILD_CONTRACT.md §3:
+|   GET  /ferry/schedules                      FerryScheduleController@index   public
+|   POST /ferry/tickets                        FerryTicketController@store     visitor
+|   GET  /ferry/tickets/{ticket}               FerryTicketController@show      visitor, operator
+|   GET  /staff/ferry ... ->middleware(['auth', 'role:ferry_operator'])
+*/
