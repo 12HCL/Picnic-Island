@@ -37,6 +37,16 @@
                      content (Safhaan). Add yours when your route exists - a link to a
                      route nobody has written yet is a 404 in the screenshots appendix.
                      Use route() names, not url(), so a renamed URL does not break the nav. --}}
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('hotel.index') || request()->routeIs('hotel.show') ? 'active' : '' }}" href="{{ route('hotel.index') }}">Hotels</a>
+                </li>
+                @auth
+                    @if (auth()->user()->hasRole('hotel_staff'))
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('hotel.dashboard') || request()->routeIs('hotel.staff.*') ? 'active' : '' }}" href="{{ route('hotel.dashboard') }}">Hotel Management</a>
+                        </li>
+                    @endif
+                @endauth
             </ul>
 
             <ul class="navbar-nav">

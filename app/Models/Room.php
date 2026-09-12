@@ -45,4 +45,24 @@ class Room extends Model
             ->withPivot('nightly_rate', 'nights')
             ->withTimestamps();
     }
+
+    /**
+     * True when the room has no overlapping active booking in the given date range.
+     * "Active" means pending, confirmed, or checked_in — completed/cancelled do not block.
+     * Availability is derived from hotel_booking_rooms (MASTER_SCHEMA.md §5).
+     */
+    public function isAvailableFor(string $checkIn, string $checkOut): bool
+    {
+        if ($this->status !== 'available') {
+            return false;
+        }
+
+        return ! $this->bookingRooms()
+            ->whereHas('hotelBooking', function ($q) use ($checkIn, $checkOut) {
+                $q->whereIn('status', ['pending', 'confirmed', 'checked_in'])
+                  ->where('check_in', '<', $checkOut)
+                  ->where('check_out', '>', $checkIn);
+            })
+            ->exists();
+    }
 }

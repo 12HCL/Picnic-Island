@@ -38,8 +38,22 @@ class DashboardControllerTest extends TestCase
             $this->assertAuthenticatedAs($user);
 
             $dashboardResponse = $this->get('/dashboard');
-            $dashboardResponse->assertOk();
-            $dashboardResponse->assertViewIs('dashboard');
+
+            $dashboardRoute = match ($roleName) {
+                'visitor' => 'visitor.bookings.index',
+                'hotel_staff' => 'hotel.dashboard',
+                'ferry_operator' => 'ferry.dashboard',
+                'park_staff' => 'park.dashboard',
+                'admin' => 'admin.dashboard',
+                default => null,
+            };
+
+            if ($dashboardRoute !== null && \Illuminate\Support\Facades\Route::has($dashboardRoute)) {
+                $dashboardResponse->assertRedirect(route($dashboardRoute));
+            } else {
+                $dashboardResponse->assertOk();
+                $dashboardResponse->assertViewIs('dashboard');
+            }
 
             $this->post('/logout');
             $this->assertGuest();
