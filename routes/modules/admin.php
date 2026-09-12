@@ -25,6 +25,10 @@
 | Your routes are listed in BUILD_CONTRACT.md §3 - that table is the contract.
 */
 
+use App\Http\Controllers\Visitor\MyBookingsController;
 use Illuminate\Support\Facades\Route;
 
-// Mohamed Faain: your routes go here.
+Route::middleware(['auth', 'role:visitor'])->group(function () {
+    Route::get('/my-bookings', [MyBookingsController::class, 'index'])
+        ->name('visitor.bookings.index');
+});
