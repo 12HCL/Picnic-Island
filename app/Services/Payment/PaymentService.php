@@ -56,9 +56,38 @@ class PaymentService
         });
     }
 
+    /**
+     * Take a simulated payment for a ferry ticket and record it.
+     * BUILD_CONTRACT.md §6 seam 4. Payment state only: ticket creation, the
+     * hotel-booking re-check and the schedule seat update belong to Naayif's
+     * FerryTicketController@store transaction, which calls this method.
+     */
     public function payForFerryTicket(FerryTicket $ticket, string $method): Payment
     {
-        throw new \LogicException('FerryTicket payment is not implemented yet.');
+        if (! in_array($method, self::METHODS, true)) {
+            throw new \InvalidArgumentException("Unknown payment method [{$method}].");
+        }
+
+        return DB::transaction(function () use ($ticket, $method) {
+            // Generated first on purpose: nextReference() takes lockForUpdate() on
+            // payments, and holding that lock from here to commit is what stops two
+            // simultaneous confirmations both passing the already-paid check below.
+            $reference = $this->nextReference();
+
+            if (Payment::where('ferry_ticket_id', $ticket->id)->where('status', 'paid')->exists()) {
+                throw new \DomainException("Ferry ticket {$ticket->reference} is already paid.");
+            }
+
+            return Payment::create([
+                'user_id' => $ticket->user_id,
+                'ferry_ticket_id' => $ticket->id,
+                'reference' => $reference,
+                'amount' => $ticket->fare,
+                'method' => $method,
+                'status' => 'paid',
+                'paid_at' => now(),
+            ]);
+        });
     }
 
     public function payForParkTicket(Ticket $ticket, string $method): Payment
