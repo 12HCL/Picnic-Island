@@ -15,11 +15,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Home') &mdash; {{ config('app.name') }}</title>
 
-    {{-- Bootstrap 5 from CDN. There is no Vite and no npm build in this project.
-         Sprint 3: download both files into public/css and public/js and switch these
-         two tags to asset(), so the demo survives a dropped connection. --}}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+    {{-- Bootstrap is vendored locally and pinned at 5.3.3. This project still has no build step. --}}
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+    <script src="{{ asset('js/bootstrap.bundle.min.js') }}" defer></script>
 </head>
 <body class="bg-body-tertiary d-flex flex-column min-vh-100">
 
@@ -37,6 +35,30 @@
                      content (Safhaan). Add yours when your route exists - a link to a
                      route nobody has written yet is a 404 in the screenshots appendix.
                      Use route() names, not url(), so a renamed URL does not break the nav. --}}
+                @auth
+                    @if (auth()->user()->hasRole('visitor'))
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('visitor.bookings.*') ? 'active' : '' }}" href="{{ route('visitor.bookings.index') }}">My bookings</a>
+                        </li>
+                    @endif
+
+                    @if (auth()->user()->hasRole('admin'))
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {{ request()->routeIs('admin.*') ? 'active' : '' }}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Admin
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">Dashboard</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">Users</a>
+                                </li>
+                            </ul>
+                        </li>
+                    @endif
+                @endauth
+
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('hotel.index') || request()->routeIs('hotel.show') ? 'active' : '' }}" href="{{ route('hotel.index') }}">Hotels</a>
                 </li>
