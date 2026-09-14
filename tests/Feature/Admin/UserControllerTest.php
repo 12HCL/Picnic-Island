@@ -379,6 +379,7 @@ class UserControllerTest extends TestCase
         $response->assertViewHas('activityCounts', [
             'hotel_bookings' => 0,
             'ferry_tickets' => 0,
+            'park_tickets' => 0,
             'payments' => 0,
         ]);
         $response->assertSee('Details User');

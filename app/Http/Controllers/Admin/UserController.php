@@ -9,11 +9,13 @@ use App\Models\FerryTicket;
 use App\Models\HotelBooking;
 use App\Models\Payment;
 use App\Models\Role;
+use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
@@ -99,6 +101,7 @@ class UserController extends Controller
         $activityCounts = [
             'hotel_bookings' => HotelBooking::query()->where('user_id', $user->id)->count(),
             'ferry_tickets' => FerryTicket::query()->where('user_id', $user->id)->count(),
+            'park_tickets' => Ticket::query()->where('user_id', $user->id)->count(),
             'payments' => Payment::query()->where('user_id', $user->id)->count(),
         ];
 
@@ -127,22 +130,30 @@ class UserController extends Controller
         $validated = $request->validated();
         $newRoleId = (int) $validated['role_id'];
 
-        if ($user->role_id !== $newRoleId && $this->isLastActiveAdmin($user)) {
+        $refused = DB::transaction(function () use ($user, $validated, $newRoleId): bool {
+            if ($user->role_id !== $newRoleId && $this->isLastActiveAdmin($user)) {
+                return true;
+            }
+
+            $user->name = $validated['name'];
+            $user->email = $validated['email'];
+            $user->phone = $validated['phone'] ?? null;
+            $user->role_id = $newRoleId;
+
+            if (! empty($validated['password'])) {
+                $user->password = Hash::make($validated['password']);
+            }
+
+            $user->save();
+
+            return false;
+        });
+
+        if ($refused) {
             return redirect()
                 ->route('admin.users.index')
                 ->with('error', 'The last active admin cannot be assigned another role.');
         }
-
-        $user->name = $validated['name'];
-        $user->email = $validated['email'];
-        $user->phone = $validated['phone'] ?? null;
-        $user->role_id = $newRoleId;
-
-        if (! empty($validated['password'])) {
-            $user->password = Hash::make($validated['password']);
-        }
-
-        $user->save();
 
         return redirect()
             ->route('admin.users.index')
@@ -154,14 +165,22 @@ class UserController extends Controller
      */
     public function deactivate(User $user): RedirectResponse
     {
-        if ($this->isLastActiveAdmin($user)) {
+        $refused = DB::transaction(function () use ($user): bool {
+            if ($this->isLastActiveAdmin($user)) {
+                return true;
+            }
+
+            $user->is_active = false;
+            $user->save();
+
+            return false;
+        });
+
+        if ($refused) {
             return redirect()
                 ->route('admin.users.index')
                 ->with('error', 'The last active admin cannot be deactivated.');
         }
-
-        $user->is_active = false;
-        $user->save();
 
         return redirect()
             ->route('admin.users.index')
@@ -198,9 +217,15 @@ class UserController extends Controller
             return false;
         }
 
+        // lockForUpdate, and the DB::transaction in both callers, close a check-then-act
+        // race: two admins deactivating each other at the same moment would both count two
+        // active admins, both decide there is one to spare, and both write - leaving zero.
+        // Same discipline as PaymentService::nextReference() and BR-02 on ferry seats.
         return User::query()
-            ->where('is_active', true)
-            ->whereHas('role', fn (Builder $query) => $query->where('name', 'admin'))
+            ->join('roles', 'roles.id', '=', 'users.role_id')
+            ->where('users.is_active', true)
+            ->where('roles.name', 'admin')
+            ->lockForUpdate()
             ->count() === 1;
     }
 

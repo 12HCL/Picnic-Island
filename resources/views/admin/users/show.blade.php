@@ -56,7 +56,7 @@
                 <div class="card-header bg-body-tertiary fw-semibold">Recorded activity</div>
                 <div class="card-body">
                     @if (array_sum($activityCounts) === 0)
-                        <x-shared.empty-state message="This user has no bookings, ferry tickets, or payments yet." />
+                        <x-shared.empty-state message="This user has no bookings, tickets, or payments yet." />
                     @else
                         <dl class="row mb-0">
                             <dt class="col-8">Hotel bookings</dt>
@@ -64,6 +64,9 @@
 
                             <dt class="col-8">Ferry tickets</dt>
                             <dd class="col-4 text-end">{{ $activityCounts['ferry_tickets'] }}</dd>
+
+                            <dt class="col-8">Park tickets</dt>
+                            <dd class="col-4 text-end">{{ $activityCounts['park_tickets'] }}</dd>
 
                             <dt class="col-8">Payments</dt>
                             <dd class="col-4 text-end mb-0">{{ $activityCounts['payments'] }}</dd>
