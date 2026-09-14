@@ -29,6 +29,7 @@ use App\Http\Controllers\Park\CapacityController;
 use App\Http\Controllers\Park\GateSaleController;
 use App\Http\Controllers\Park\ParkActivityController;
 use App\Http\Controllers\Park\ParkEventController;
+use App\Http\Controllers\Park\ParkReportController;
 use App\Http\Controllers\Park\StaffDashboardController;
 use App\Http\Controllers\Park\StaffEventController;
 use App\Http\Controllers\Park\TicketController;
@@ -86,6 +87,10 @@ Route::middleware(['auth', 'role:park_staff'])->group(function () {
     // Capacity monitoring — BR-06, reporting only.
     Route::get('/staff/park/capacity', [CapacityController::class, 'index'])
         ->name('park.staff.capacity');
+
+    // Sales and visitor reports.
+    Route::get('/staff/park/reports', [ParkReportController::class, 'index'])
+        ->name('park.staff.reports.index');
 
     // Scheduling. Cancelling is a named POST, the same shape hotel uses for its status
     // transitions; DELETE stays for events nothing has been sold against.
