@@ -30,6 +30,7 @@ use App\Http\Controllers\Park\GateSaleController;
 use App\Http\Controllers\Park\ParkActivityController;
 use App\Http\Controllers\Park\ParkEventController;
 use App\Http\Controllers\Park\StaffDashboardController;
+use App\Http\Controllers\Park\StaffEventController;
 use App\Http\Controllers\Park\TicketController;
 use App\Http\Controllers\Park\TicketValidationController;
 use Illuminate\Support\Facades\Route;
@@ -85,6 +86,21 @@ Route::middleware(['auth', 'role:park_staff'])->group(function () {
     // Capacity monitoring — BR-06, reporting only.
     Route::get('/staff/park/capacity', [CapacityController::class, 'index'])
         ->name('park.staff.capacity');
+
+    // Scheduling. Cancelling is a named POST, the same shape hotel uses for its status
+    // transitions; DELETE stays for events nothing has been sold against.
+    Route::post('/staff/park/events/{event}/cancel', [StaffEventController::class, 'cancel'])
+        ->name('park.staff.events.cancel');
+    Route::resource('staff/park/events', StaffEventController::class)
+        ->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])
+        ->names([
+            'index'   => 'park.staff.events.index',
+            'create'  => 'park.staff.events.create',
+            'store'   => 'park.staff.events.store',
+            'edit'    => 'park.staff.events.edit',
+            'update'  => 'park.staff.events.update',
+            'destroy' => 'park.staff.events.destroy',
+        ])->parameters(['events' => 'event']);
 
     // Activity catalogue CRUD — full resource. destroy is allowed here, unlike tickets:
     // park_events.park_activity_id is restrictOnDelete, so MySQL refuses to remove an
