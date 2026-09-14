@@ -25,6 +25,30 @@
 | Your routes are listed in BUILD_CONTRACT.md §3 - that table is the contract.
 */
 
+use App\Http\Controllers\Park\ParkActivityController;
+use App\Http\Controllers\Park\ParkEventController;
 use Illuminate\Support\Facades\Route;
 
-// Ahmed Malaaz Mohamed: your routes go here.
+
+// ── Public (no auth) ─────────────────────────────────────────────────────────
+// Browsing runs before buying: the brief asks a visitor to see what is on before
+// they are asked to log in.
+Route::get('/park/events', [ParkEventController::class, 'index'])->name('park.events.index');
+Route::get('/park/events/{event}', [ParkEventController::class, 'show'])->name('park.events.show');
+
+// ── Park staff ───────────────────────────────────────────────────────────────
+Route::middleware(['auth', 'role:park_staff'])->group(function () {
+
+    // Activity catalogue CRUD — full resource. destroy is allowed here, unlike tickets:
+    // park_events.park_activity_id is restrictOnDelete, so MySQL refuses to remove an
+    // activity that has ever been scheduled and the sales history cannot be orphaned.
+    Route::resource('staff/park/activities', ParkActivityController::class)->names([
+        'index'   => 'park.staff.activities.index',
+        'create'  => 'park.staff.activities.create',
+        'store'   => 'park.staff.activities.store',
+        'show'    => 'park.staff.activities.show',
+        'edit'    => 'park.staff.activities.edit',
+        'update'  => 'park.staff.activities.update',
+        'destroy' => 'park.staff.activities.destroy',
+    ])->parameters(['activities' => 'activity']);
+});
