@@ -5,13 +5,12 @@
 @section('content')
     <x-shared.page-header
         title="My bookings"
-        subtitle="Your hotel stays and ferry crossings in one place."
+        subtitle="Your hotel stays, ferry crossings, and park tickets in one place."
     />
 
-    {{-- Park tickets join this dashboard when Malaaz's Ticket model and tickets table land. --}}
-    @if ($hotelBookings->isEmpty() && $ferryTickets->isEmpty())
+    @if ($hotelBookings->isEmpty() && $ferryTickets->isEmpty() && $parkTickets->isEmpty())
         <div class="card shadow-sm">
-            <x-shared.empty-state message="You do not have any hotel bookings or ferry tickets yet.">
+            <x-shared.empty-state message="You do not have any hotel bookings, ferry tickets or park tickets yet.">
                 <a href="{{ route('hotel.index') }}" class="btn btn-sm btn-primary">Browse hotels</a>
             </x-shared.empty-state>
         </div>
@@ -99,6 +98,47 @@
                                             </td>
                                             <td>{{ $ticket->schedule->vessel->name }}</td>
                                             <td class="text-end">MVR {{ number_format($ticket->fare, 2) }}</td>
+                                            <td><x-shared.status-badge :status="$ticket->status" /></td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+                </section>
+            </div>
+
+            <div class="col-12">
+                <section class="card shadow-sm" aria-labelledby="park-tickets-heading">
+                    <div class="card-header bg-body-tertiary">
+                        <h2 id="park-tickets-heading" class="h5 mb-0">Park tickets</h2>
+                    </div>
+
+                    @if ($parkTickets->isEmpty())
+                        <x-shared.empty-state message="You do not have any park tickets yet." />
+                    @else
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light small">
+                                    <tr>
+                                        <th>Reference</th>
+                                        <th>Activity</th>
+                                        <th>Event date</th>
+                                        <th>Start time</th>
+                                        <th class="text-center">Quantity</th>
+                                        <th class="text-end">Total</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($parkTickets as $ticket)
+                                        <tr>
+                                            <td class="fw-semibold">{{ $ticket->reference }}</td>
+                                            <td>{{ $ticket->event->activity->name }}</td>
+                                            <td>{{ $ticket->event->event_date->format('d M Y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($ticket->event->start_time)->format('H:i') }}</td>
+                                            <td class="text-center">{{ $ticket->quantity }}</td>
+                                            <td class="text-end">MVR {{ $ticket->total() }}</td>
                                             <td><x-shared.status-badge :status="$ticket->status" /></td>
                                         </tr>
                                     @endforeach

@@ -7,6 +7,9 @@ use App\Models\FerrySchedule;
 use App\Models\FerryTicket;
 use App\Models\Hotel;
 use App\Models\HotelBooking;
+use App\Models\ParkActivity;
+use App\Models\ParkEvent;
+use App\Models\Ticket;
 use App\Models\User;
 use App\Models\Vessel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -64,7 +67,69 @@ class MyBookingsControllerTest extends TestCase
         $this->actingAs($visitor)
             ->get(route('visitor.bookings.index'))
             ->assertOk()
-            ->assertSee('You do not have any hotel bookings or ferry tickets yet.');
+            ->assertSee('You do not have any hotel bookings, ferry tickets or park tickets yet.');
+    }
+
+    public function test_a_visitor_sees_their_own_park_ticket(): void
+    {
+        $visitor = User::factory()->role('visitor')->create();
+        $event = $this->parkEvent();
+        $ticket = $this->parkTicket($visitor, $event, 'PIB-PT-OWN');
+
+        $response = $this->actingAs($visitor)->get(route('visitor.bookings.index'));
+
+        $response->assertOk();
+        $response->assertSee($ticket->reference);
+        $response->assertSee('Lagoon Show');
+        $response->assertSee('18 Sep 2026');
+        $response->assertSee('14:00');
+        $response->assertSee('MVR 100.00');
+        $response->assertSee('Valid');
+        $response->assertViewHas('parkTickets', function ($tickets) use ($ticket): bool {
+            $viewTicket = $tickets->first();
+
+            return $tickets->count() === 1
+                && $viewTicket->is($ticket)
+                && $viewTicket->relationLoaded('event')
+                && $viewTicket->event->relationLoaded('activity');
+        });
+    }
+
+    public function test_a_visitor_does_not_see_another_visitors_park_ticket(): void
+    {
+        $visitor = User::factory()->role('visitor')->create();
+        $otherVisitor = User::factory()->role('visitor')->create();
+        $ticket = $this->parkTicket($otherVisitor, $this->parkEvent(), 'PIB-PT-OTHER');
+
+        $this->actingAs($visitor)
+            ->get(route('visitor.bookings.index'))
+            ->assertOk()
+            ->assertDontSee($ticket->reference)
+            ->assertViewHas('parkTickets', fn ($tickets): bool => $tickets->isEmpty());
+    }
+
+    public function test_a_visitor_does_not_see_an_anonymous_gate_sale_ticket(): void
+    {
+        $visitor = User::factory()->role('visitor')->create();
+        $ticket = $this->parkTicket(null, $this->parkEvent(), 'PIB-PT-GATE');
+
+        $this->actingAs($visitor)
+            ->get(route('visitor.bookings.index'))
+            ->assertOk()
+            ->assertDontSee($ticket->reference)
+            ->assertViewHas('parkTickets', fn ($tickets): bool => $tickets->isEmpty());
+    }
+
+    public function test_a_visitor_with_only_a_park_ticket_sees_it_without_the_global_empty_state(): void
+    {
+        $visitor = User::factory()->role('visitor')->create();
+        $ticket = $this->parkTicket($visitor, $this->parkEvent(), 'PIB-PT-ONLY');
+
+        $this->actingAs($visitor)
+            ->get(route('visitor.bookings.index'))
+            ->assertOk()
+            ->assertSee($ticket->reference)
+            ->assertDontSee('You do not have any hotel bookings, ferry tickets or park tickets yet.');
     }
 
     public function test_a_guest_is_redirected_to_login(): void
@@ -133,6 +198,41 @@ class MyBookingsControllerTest extends TestCase
             'fare' => 75.00,
             'status' => 'issued',
             'issued_at' => now(),
+        ]);
+    }
+
+    private function parkEvent(): ParkEvent
+    {
+        $activity = ParkActivity::create([
+            'name' => 'Lagoon Show',
+            'type' => 'show',
+            'description' => 'A family show by the lagoon.',
+            'default_capacity' => 100,
+            'base_price' => 50.00,
+            'is_active' => true,
+        ]);
+
+        return ParkEvent::create([
+            'park_activity_id' => $activity->id,
+            'event_date' => '2026-09-18',
+            'start_time' => '14:00:00',
+            'capacity' => 100,
+            'seats_taken' => 2,
+            'price' => 50.00,
+            'status' => 'scheduled',
+        ]);
+    }
+
+    private function parkTicket(?User $user, ParkEvent $event, string $reference): Ticket
+    {
+        return Ticket::create([
+            'user_id' => $user?->id,
+            'park_event_id' => $event->id,
+            'reference' => $reference,
+            'quantity' => 2,
+            'unit_price' => 50.00,
+            'channel' => $user === null ? 'gate' : 'online',
+            'status' => 'valid',
         ]);
     }
 }
