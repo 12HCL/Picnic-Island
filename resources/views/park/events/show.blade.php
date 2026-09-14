@@ -58,11 +58,13 @@
                     </p>
                 @else
                     {{--
-                        TicketController@store lands next. The form is already the shape it will
-                        accept — park_event_id and quantity — so wiring it up is a one-line change
-                        to the action, not a rewrite of this card.
+                        GET, not POST: this only carries the choice through to the confirmation
+                        screen. Nothing is written until payment is confirmed there —
+                        MASTER_SCHEMA.md §14.
                     --}}
-                    <form>
+                    <form method="GET" action="{{ route('park.tickets.create') }}">
+                        <input type="hidden" name="park_event_id" value="{{ $event->id }}">
+
                         <label for="quantity" class="form-label small text-muted">Admissions</label>
                         <select name="quantity" id="quantity" class="form-select mb-3">
                             @for ($i = 1; $i <= min(10, $seatsRemaining); $i++)
@@ -70,12 +72,7 @@
                             @endfor
                         </select>
 
-                        <button type="button" class="btn btn-primary w-100" disabled>
-                            Continue to payment
-                        </button>
-                        <p class="text-body-secondary small mt-2 mb-0">
-                            Online sales open when the ticket controller lands.
-                        </p>
+                        <button type="submit" class="btn btn-primary w-100">Continue to payment</button>
                     </form>
                 @endif
             </div>
