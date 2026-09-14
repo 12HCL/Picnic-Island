@@ -25,11 +25,14 @@
 | Your routes are listed in BUILD_CONTRACT.md §3 - that table is the contract.
 */
 
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Visitor\MyBookingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/admin', [AdminDashboardController::class, 'index'])
+        ->name('admin.dashboard');
     Route::get('/admin/users', [UserController::class, 'index'])
         ->name('admin.users.index');
     Route::get('/admin/users/create', [UserController::class, 'create'])
