@@ -90,9 +90,45 @@ class PaymentService
         });
     }
 
+    /**
+     * Take a simulated payment for a park or beach admission and record it.
+     * BUILD_CONTRACT.md §6 seam 4. Called from inside TicketSalesService::sell(), which
+     * holds the outer transaction — Laravel nests this one as a savepoint, so a failure
+     * here rolls the ticket and the seat increment back with it.
+     *
+     * user_id is copied from the ticket and stays null for an anonymous gate sale
+     * (MASTER_SCHEMA.md §14, §17). The seller is recorded on tickets.sold_by, never here,
+     * which is why revenue is reported by channel rather than by user_id.
+     *
+     * The amount is unit_price x quantity: a ticket admits `quantity` people and the
+     * payment must match what was charged, not the price of one admission.
+     */
     public function payForParkTicket(Ticket $ticket, string $method): Payment
     {
-        throw new \LogicException('ParkTicket payment is not implemented yet.');
+        if (! in_array($method, self::METHODS, true)) {
+            throw new \InvalidArgumentException("Unknown payment method [{$method}].");
+        }
+
+        return DB::transaction(function () use ($ticket, $method) {
+            // Generated first on purpose: nextReference() takes lockForUpdate() on
+            // payments, and holding that lock from here to commit is what stops two
+            // simultaneous confirmations both passing the already-paid check below.
+            $reference = $this->nextReference();
+
+            if (Payment::where('ticket_id', $ticket->id)->where('status', 'paid')->exists()) {
+                throw new \DomainException("Park ticket {$ticket->reference} is already paid.");
+            }
+
+            return Payment::create([
+                'user_id' => $ticket->user_id,
+                'ticket_id' => $ticket->id,
+                'reference' => $reference,
+                'amount' => $ticket->total(),
+                'method' => $method,
+                'status' => 'paid',
+                'paid_at' => now(),
+            ]);
+        });
     }
 
     /**
