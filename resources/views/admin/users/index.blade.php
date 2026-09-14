@@ -6,7 +6,9 @@
     <x-shared.page-header
         title="Manage users"
         subtitle="Search accounts, filter by role, and review whether each account is active."
-    />
+    >
+        <a href="{{ route('admin.users.create') }}" class="btn btn-primary">Create user</a>
+    </x-shared.page-header>
 
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
@@ -60,6 +62,7 @@
                             <th scope="col">Phone</th>
                             <th scope="col">Role</th>
                             <th scope="col">Account status</th>
+                            <th scope="col" class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -71,6 +74,25 @@
                                 <td>{{ $user->role->label }}</td>
                                 <td>
                                     <x-shared.status-badge :status="$user->is_active ? 'active' : 'inactive'" />
+                                </td>
+                                <td class="text-end">
+                                    <div class="d-flex flex-wrap justify-content-end gap-2">
+                                        <a href="{{ route('admin.users.show', $user) }}" class="btn btn-sm btn-outline-primary">View</a>
+                                        <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+
+                                        @if ($user->is_active)
+                                            <form method="POST" action="{{ route('admin.users.deactivate', $user) }}"
+                                                  onsubmit="return confirm('Deactivate this user account?')">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">Deactivate</button>
+                                            </form>
+                                        @else
+                                            <form method="POST" action="{{ route('admin.users.activate', $user) }}">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-outline-success">Activate</button>
+                                            </form>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach

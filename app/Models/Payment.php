@@ -6,8 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * The FerryTicket relation is still deferred — the model exists, but adding it belongs to
- * Module 3. BR-03 allows exactly one of the three targets to be set on any row.
+ * All three target relations now exist. BR-03 allows exactly one of them to be set on any
+ * row, enforced by the chk_payments_single_target CHECK constraint — which is MySQL-only,
+ * so the test suite cannot prove it and a test must assert this application's own behaviour
+ * instead (MASTER_SCHEMA.md §17).
  */
 class Payment extends Model
 {
@@ -43,6 +45,14 @@ class Payment extends Model
     public function hotelBooking(): BelongsTo
     {
         return $this->belongsTo(HotelBooking::class);
+    }
+
+    /**
+     * The ferry crossing this payment bought. Module 3.
+     */
+    public function ferryTicket(): BelongsTo
+    {
+        return $this->belongsTo(FerryTicket::class);
     }
 
     /**
