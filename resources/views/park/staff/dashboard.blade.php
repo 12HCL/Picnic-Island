@@ -3,12 +3,8 @@
 @section('content')
 
 <x-shared.page-header
-    title="Theme Park &amp; Beach"
+    title="Theme Park & Beach"
     :subtitle="'Staff dashboard — ' . now()->format('l j F Y')" />
-
-@if (session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
-@endif
 
 <div class="row g-3 mb-4">
     <div class="col-sm-6 col-lg-3">

@@ -8,13 +8,6 @@
     <a href="{{ route('park.staff.activities.create') }}" class="btn btn-primary btn-sm">+ Add activity</a>
 </x-shared.page-header>
 
-@if (session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
-@endif
-@if (session('error'))
-    <div class="alert alert-danger">{{ session('error') }}</div>
-@endif
-
 {{-- Filters --}}
 <div class="card shadow-sm mb-4">
     <div class="card-body">

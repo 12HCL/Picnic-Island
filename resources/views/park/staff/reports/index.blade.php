@@ -3,7 +3,7 @@
 @section('content')
 
 <x-shared.page-header
-    title="Sales &amp; visitor reports"
+    title="Sales & visitor reports"
     subtitle="Reported over the date each event ran, not the date it was paid for.">
     <a href="{{ route('park.dashboard') }}" class="btn btn-outline-secondary btn-sm">&larr; Dashboard</a>
 </x-shared.page-header>

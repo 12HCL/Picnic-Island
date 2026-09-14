@@ -85,28 +85,33 @@
                     <p class="lead mb-0">{{ $result['reason'] }}</p>
                 </div>
 
+                {{--
+                    $t is a plain array, not a Ticket. The controller flashes five fields
+                    rather than the model, because flash data is serialised into the session
+                    and a model does not survive that round trip as a model.
+                --}}
                 @if ($result['ticket'])
                     @php $t = $result['ticket']; @endphp
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between">
                             <span class="text-body-secondary small">Reference</span>
-                            <code>{{ $t->reference }}</code>
+                            <code>{{ $t['reference'] }}</code>
                         </li>
                         <li class="list-group-item d-flex justify-content-between">
                             <span class="text-body-secondary small">Event</span>
-                            <span>{{ $t->event->activity->name }}</span>
+                            <span>{{ $t['activity'] }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between">
                             <span class="text-body-secondary small">Event date</span>
-                            <span>{{ $t->event->event_date->format('D j M Y') }}</span>
+                            <span>{{ $t['event_date'] }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between">
                             <span class="text-body-secondary small">Admissions</span>
-                            <span>{{ $t->quantity }}</span>
+                            <span>{{ $t['quantity'] }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between">
                             <span class="text-body-secondary small">Status</span>
-                            <x-shared.status-badge :status="$t->status" />
+                            <x-shared.status-badge :status="$t['status']" />
                         </li>
                     </ul>
                 @endif

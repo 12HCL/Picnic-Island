@@ -6,12 +6,6 @@
     title="Sell at the gate"
     subtitle="At-entrance admissions. No account needed for the buyer." />
 
-@if (session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
-@endif
-@if (session('error'))
-    <div class="alert alert-danger">{{ session('error') }}</div>
-@endif
 @if ($errors->any())
     <div class="alert alert-danger">
         <ul class="mb-0 small">

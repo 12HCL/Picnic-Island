@@ -78,6 +78,45 @@ class TicketValidationTest extends TestCase
         $this->assertNotNull($ticket->validated_at);
     }
 
+    /**
+     * The verdict has to survive the redirect and actually render. Every other test here
+     * asserts the flashed session value and stops, which is what let a 500 through: the
+     * controller flashed the Ticket model, the session serialised it to an array, and the
+     * view died on `$t->reference`. Following the redirect is what catches that.
+     */
+    public function test_the_verdict_renders_on_the_terminal_after_the_redirect(): void
+    {
+        $ticket = $this->sell($this->today, 2);
+
+        // from() sets the referer: back() has nothing to go back to in a test otherwise.
+        $this->actingAs($this->staff)
+            ->from(route('park.staff.validate'))
+            ->post(route('park.staff.validate.check'), ['reference' => $ticket->reference])
+            ->assertRedirect(route('park.staff.validate'));
+
+        $this->actingAs($this->staff)
+            ->get(route('park.staff.validate'))
+            ->assertOk()
+            ->assertSee('ADMIT')
+            ->assertSee($ticket->reference)
+            ->assertSee('Sunset Coaster');
+    }
+
+    public function test_a_rejection_also_renders_with_its_ticket_details(): void
+    {
+        $ticket = $this->sell($this->today, 1);
+        $ticket->update(['status' => 'used', 'validated_at' => now()->subHour()]);
+
+        $this->actingAs($this->staff)
+            ->post(route('park.staff.validate.check'), ['reference' => $ticket->reference]);
+
+        $this->actingAs($this->staff)
+            ->get(route('park.staff.validate'))
+            ->assertOk()
+            ->assertSee('DO NOT ADMIT')
+            ->assertSee($ticket->reference);
+    }
+
     // ── E1: already used ──────────────────────────────────────────────────────
 
     public function test_a_used_ticket_is_refused_the_second_time(): void

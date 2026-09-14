@@ -85,12 +85,27 @@ class TicketValidationController extends Controller
             ]);
         }
 
+        /**
+         * Flash plain values, never the model. Flash data is serialised into the session —
+         * `database` here, `array` under test — and an Eloquent model does not survive that
+         * round trip intact: it comes back as an array and the view's `$t->reference` dies
+         * with "attempt to read property on array". The view needs five fields, so it is
+         * given five fields.
+         */
+        $summary = fn (Ticket $t): array => [
+            'reference' => $t->reference,
+            'activity' => $t->event->activity->name,
+            'event_date' => $t->event->event_date->format('D j M Y'),
+            'quantity' => $t->quantity,
+            'status' => $t->status,
+        ];
+
         // E1 — already used. Show when, because that is the question that follows.
         if ($ticket->status === 'used') {
             return back()->with('validation', [
                 'verdict' => 'rejected',
                 'reason' => 'Already used at ' . $ticket->validated_at?->format('H:i \o\n D j M') . '. Deny entry.',
-                'ticket' => $ticket,
+                'ticket' => $summary($ticket),
             ]);
         }
 
@@ -98,7 +113,7 @@ class TicketValidationController extends Controller
             return back()->with('validation', [
                 'verdict' => 'rejected',
                 'reason' => 'This ticket was cancelled. Deny entry.',
-                'ticket' => $ticket,
+                'ticket' => $summary($ticket),
             ]);
         }
 
@@ -108,7 +123,7 @@ class TicketValidationController extends Controller
                 'verdict' => 'rejected',
                 'reason' => 'This ticket is for ' . $ticket->event->event_date->format('D j M Y')
                     . ', not today. Redirect the visitor.',
-                'ticket' => $ticket,
+                'ticket' => $summary($ticket),
             ]);
         }
 
@@ -117,7 +132,7 @@ class TicketValidationController extends Controller
             return back()->with('validation', [
                 'verdict' => 'rejected',
                 'reason' => 'This event was cancelled. Redirect the visitor.',
-                'ticket' => $ticket,
+                'ticket' => $summary($ticket),
             ]);
         }
 
@@ -129,7 +144,7 @@ class TicketValidationController extends Controller
         return back()->with('validation', [
             'verdict' => 'admitted',
             'reason' => 'Admit ' . $ticket->quantity . ' to ' . $ticket->event->activity->name . '.',
-            'ticket' => $ticket->fresh(['event.activity']),
+            'ticket' => $summary($ticket->fresh(['event.activity'])),
         ]);
     }
 }

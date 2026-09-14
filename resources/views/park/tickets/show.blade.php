@@ -8,13 +8,6 @@
     <a href="{{ route('park.events.index') }}" class="btn btn-outline-secondary btn-sm">What's on</a>
 </x-shared.page-header>
 
-@if (session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
-@endif
-@if (session('error'))
-    <div class="alert alert-danger">{{ session('error') }}</div>
-@endif
-
 <div class="row g-4">
     <div class="col-lg-7">
         <div class="card shadow-sm">
