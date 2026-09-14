@@ -32,6 +32,20 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/users', [UserController::class, 'index'])
         ->name('admin.users.index');
+    Route::get('/admin/users/create', [UserController::class, 'create'])
+        ->name('admin.users.create');
+    Route::post('/admin/users', [UserController::class, 'store'])
+        ->name('admin.users.store');
+    Route::get('/admin/users/{user}', [UserController::class, 'show'])
+        ->name('admin.users.show');
+    Route::get('/admin/users/{user}/edit', [UserController::class, 'edit'])
+        ->name('admin.users.edit');
+    Route::put('/admin/users/{user}', [UserController::class, 'update'])
+        ->name('admin.users.update');
+    Route::post('/admin/users/{user}/deactivate', [UserController::class, 'deactivate'])
+        ->name('admin.users.deactivate');
+    Route::post('/admin/users/{user}/activate', [UserController::class, 'activate'])
+        ->name('admin.users.activate');
 });
 
 Route::middleware(['auth', 'role:visitor'])->group(function () {
