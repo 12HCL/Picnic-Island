@@ -25,10 +25,13 @@
 | Your routes are listed in BUILD_CONTRACT.md §3 - that table is the contract.
 */
 
+use App\Http\Controllers\Park\CapacityController;
 use App\Http\Controllers\Park\GateSaleController;
 use App\Http\Controllers\Park\ParkActivityController;
 use App\Http\Controllers\Park\ParkEventController;
+use App\Http\Controllers\Park\StaffDashboardController;
 use App\Http\Controllers\Park\TicketController;
+use App\Http\Controllers\Park\TicketValidationController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -62,11 +65,26 @@ Route::middleware(['auth'])->group(function () {
 // ── Park staff ───────────────────────────────────────────────────────────────
 Route::middleware(['auth', 'role:park_staff'])->group(function () {
 
+    // Staff landing page — named 'park.dashboard' to match DashboardController's
+    // per-role redirect map, the same way hotel's is named 'hotel.dashboard'.
+    Route::get('/staff/park', [StaffDashboardController::class, 'index'])
+        ->name('park.dashboard');
+
     // At-entrance sales — the till.
     Route::get('/staff/park/sell', [GateSaleController::class, 'create'])
         ->name('park.staff.gate-sale');
     Route::post('/staff/park/sell', [GateSaleController::class, 'store'])
         ->name('park.staff.gate-sale.store');
+
+    // On-site validation — UC-16.
+    Route::get('/staff/park/validate', [TicketValidationController::class, 'index'])
+        ->name('park.staff.validate');
+    Route::post('/staff/park/validate', [TicketValidationController::class, 'validateTicket'])
+        ->name('park.staff.validate.check');
+
+    // Capacity monitoring — BR-06, reporting only.
+    Route::get('/staff/park/capacity', [CapacityController::class, 'index'])
+        ->name('park.staff.capacity');
 
     // Activity catalogue CRUD — full resource. destroy is allowed here, unlike tickets:
     // park_events.park_activity_id is restrictOnDelete, so MySQL refuses to remove an
