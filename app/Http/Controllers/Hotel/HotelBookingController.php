@@ -171,15 +171,22 @@ class HotelBookingController extends Controller
     // -------------------------------------------------------------------------
 
     /**
-     * Visitors may only see their own booking. Staff may see any.
+     * Visitors may only see their own booking. Hotel staff may see any booking.
+     * All other roles are denied with 403 per BUILD_CONTRACT.md §3.
      */
     private function authoriseView(HotelBooking $booking): void
     {
         $user = auth()->user();
 
-        if ($user->hasRole('visitor') && $booking->user_id !== $user->id) {
-            abort(403);
+        if ($user->hasRole('hotel_staff')) {
+            return;
         }
+
+        if ($user->hasRole('visitor') && $booking->user_id === $user->id) {
+            return;
+        }
+
+        abort(403);
     }
 
     /**

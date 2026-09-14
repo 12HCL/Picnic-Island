@@ -132,6 +132,14 @@ class HotelStaffTest extends TestCase
         $this->assertDatabaseMissing('rooms', ['room_number' => '202']);
     }
 
+    public function test_hotel_staff_can_view_room_details(): void
+    {
+        $response = $this->actingAs($this->staff)->get(route('hotel.staff.rooms.show', $this->room));
+        $response->assertOk();
+        $response->assertSee('Room 201');
+        $response->assertSee('Sunset Lagoon Hotel');
+    }
+
     public function test_hotel_staff_can_view_reports(): void
     {
         $response = $this->actingAs($this->staff)->get(route('hotel.staff.reports.index'));

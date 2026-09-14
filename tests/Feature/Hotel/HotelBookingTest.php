@@ -166,4 +166,66 @@ class HotelBookingTest extends TestCase
         $response->assertJsonStructure(['rooms']);
         $response->assertJsonFragment(['room_number' => '101']);
     }
+
+    public function test_owning_visitor_can_view_their_booking(): void
+    {
+        $booking = HotelBooking::create([
+            'user_id' => $this->visitor->id,
+            'hotel_id' => $this->hotel->id,
+            'reference' => 'PIB-HB-000010',
+            'check_in' => now()->addDays(1)->toDateString(),
+            'check_out' => now()->addDays(3)->toDateString(),
+            'guests' => 1,
+            'total_amount' => 1500.00,
+            'status' => 'pending',
+        ]);
+
+        $response = $this->actingAs($this->visitor)->get(route('hotel.bookings.show', $booking));
+        $response->assertOk();
+    }
+
+    public function test_hotel_staff_can_view_any_booking(): void
+    {
+        $staff = User::factory()->role('hotel_staff')->create();
+        $booking = HotelBooking::create([
+            'user_id' => $this->visitor->id,
+            'hotel_id' => $this->hotel->id,
+            'reference' => 'PIB-HB-000011',
+            'check_in' => now()->addDays(1)->toDateString(),
+            'check_out' => now()->addDays(3)->toDateString(),
+            'guests' => 1,
+            'total_amount' => 1500.00,
+            'status' => 'pending',
+        ]);
+
+        $response = $this->actingAs($staff)->get(route('hotel.bookings.show', $booking));
+        $response->assertOk();
+    }
+
+    public function test_unrelated_roles_cannot_view_visitor_booking(): void
+    {
+        $booking = HotelBooking::create([
+            'user_id' => $this->visitor->id,
+            'hotel_id' => $this->hotel->id,
+            'reference' => 'PIB-HB-000012',
+            'check_in' => now()->addDays(1)->toDateString(),
+            'check_out' => now()->addDays(3)->toDateString(),
+            'guests' => 1,
+            'total_amount' => 1500.00,
+            'status' => 'pending',
+        ]);
+
+        $otherVisitor = User::factory()->role('visitor')->create();
+        $ferryOp = User::factory()->role('ferry_operator')->create();
+        $parkStaff = User::factory()->role('park_staff')->create();
+        $admin = User::factory()->role('admin')->create();
+
+        // Other visitor receives 403
+        $this->actingAs($otherVisitor)->get(route('hotel.bookings.show', $booking))->assertForbidden();
+
+        // Non-hotel roles receive 403 (verifies Bug #1 resolution)
+        $this->actingAs($ferryOp)->get(route('hotel.bookings.show', $booking))->assertForbidden();
+        $this->actingAs($parkStaff)->get(route('hotel.bookings.show', $booking))->assertForbidden();
+        $this->actingAs($admin)->get(route('hotel.bookings.show', $booking))->assertForbidden();
+    }
 }

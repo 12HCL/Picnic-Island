@@ -81,7 +81,11 @@
                         @foreach ($rooms as $room)
                             <tr>
                                 <td>{{ $room->hotel->name }}</td>
-                                <td><strong>Room {{ $room->room_number }}</strong></td>
+                                <td>
+                                    <a href="{{ route('hotel.staff.rooms.show', $room) }}" class="fw-bold text-decoration-none">
+                                        Room {{ $room->room_number }}
+                                    </a>
+                                </td>
                                 <td>
                                     {{ $room->roomType->name }}
                                     <small class="text-muted d-block">Max {{ $room->roomType->max_occupancy }} guests</small>
@@ -93,6 +97,9 @@
                                 </td>
                                 <td class="text-end">
                                     <div class="btn-group btn-group-sm">
+                                        <a href="{{ route('hotel.staff.rooms.show', $room) }}" class="btn btn-outline-primary">
+                                            View
+                                        </a>
                                         <a href="{{ route('hotel.staff.rooms.edit', $room) }}" class="btn btn-outline-secondary">
                                             Edit
                                         </a>

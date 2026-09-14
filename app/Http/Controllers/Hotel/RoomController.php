@@ -68,6 +68,17 @@ class RoomController extends Controller
     }
 
     /**
+     * Show room details and recent bookings.
+     * GET /staff/hotel/rooms/{room} → hotel.staff.rooms.show
+     */
+    public function show(Room $room): View
+    {
+        $room->load(['hotel', 'roomType', 'bookings.user']);
+
+        return view('hotel.staff.rooms.show', compact('room'));
+    }
+
+    /**
      * Edit a room.
      * GET /staff/hotel/rooms/{room}/edit → hotel.staff.rooms.edit
      */
