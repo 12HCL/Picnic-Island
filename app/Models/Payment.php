@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * FerryTicket and Ticket relations are deferred until those models land.
+ * The FerryTicket relation is still deferred — the model exists, but adding it belongs to
+ * Module 3. BR-03 allows exactly one of the three targets to be set on any row.
  */
 class Payment extends Model
 {
@@ -30,6 +31,10 @@ class Payment extends Model
         ];
     }
 
+    /**
+     * Nullable: an anonymous gate sale has a payment but no account behind it. Report by
+     * ticket channel rather than by this column (MASTER_SCHEMA.md §14, §17).
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -38,5 +43,13 @@ class Payment extends Model
     public function hotelBooking(): BelongsTo
     {
         return $this->belongsTo(HotelBooking::class);
+    }
+
+    /**
+     * The park or beach admission this payment bought. Module 4.
+     */
+    public function ticket(): BelongsTo
+    {
+        return $this->belongsTo(Ticket::class);
     }
 }
