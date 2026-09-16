@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * MASTER_SCHEMA.md §16 — Module 5, owner Ahmed Safhaan.
@@ -28,6 +29,16 @@ class MapLocation extends Model
     ];
 
     /**
+     * Mirror the column defaults, so a location built in memory reports its category
+     * and visibility before it has been saved — which is what the shared create/edit
+     * form reads when it renders a blank MapLocation.
+     */
+    protected $attributes = [
+        'category' => 'attraction',
+        'is_visible' => true,
+    ];
+
+    /**
      * Turn raw database strings into useful PHP types when they are read.
      * Without this, is_visible comes back as the string "1" rather than true,
      * and @if ($loc->is_visible) would behave oddly.
@@ -45,15 +56,12 @@ class MapLocation extends Model
      * Module 4 (Malaaz) reads this: activities that happen at this location.
      * BUILD_CONTRACT.md §6 seam 3 — he reads, Module 5 owns.
      *
-     * Commented out until App\Models\ParkActivity exists. Uncomment the moment
-     * Malaaz commits it; leaving it live now would fatal the moment anything
-     * called it, and there is nothing to gain from that.
-     *
-     * public function activities(): HasMany
-     * {
-     *     return $this->hasMany(ParkActivity::class);
-     * }
+     * Enabled 16 September, once App\Models\ParkActivity landed.
      */
+    public function activities(): HasMany
+    {
+        return $this->hasMany(ParkActivity::class);
+    }
 
     /**
      * Query scope. Lets a controller write MapLocation::visible()->get()

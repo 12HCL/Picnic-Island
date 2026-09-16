@@ -26,21 +26,76 @@
 */
 
 use App\Http\Controllers\Content\MapController;
+use App\Http\Controllers\Content\MapLocationController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Content\PromotionController;
 
-/*
-| Public - no login required. UC-08.
-*/
+// ── Public (no auth) ─────────────────────────────────────────────────────────
+// UC-08. No login required: the map is what a prospective visitor looks at
+// before they have an account.
 Route::get('/map', [MapController::class, 'index'])->name('content.map');
 
+// ── Admin — island map management ────────────────────────────────────────────
+// UC-18 steps 1-4. Login landed on 5 September, so 'auth' now has a real login
+// route to send a guest to and these screens are properly protected.
+//
+// The seven CRUD actions are written out rather than using Route::resource,
+// because a resource declared on a slashed URI ('admin/map-locations') derives a
+// malformed parameter name and route-model binding then fails. Explicit routes
+// also match how routes/modules/park.php is written.
+//
+// {mapLocation} matches the MapLocation $mapLocation argument in the controller,
+// so Laravel looks the row up by id and hands over the model - or 404s by itself
+// if the id does not exist. That is route-model binding.
+Route::middleware(['auth', 'role:admin'])->group(function () {
+
+    // READ - list
+    Route::get('/admin/map-locations', [MapLocationController::class, 'index'])
+        ->name('content.map-locations.index');
+
+    // CREATE - form, then save. 'create' is declared before '{mapLocation}' or the
+    // word "create" would be captured as an id by the show route below.
+    Route::get('/admin/map-locations/create', [MapLocationController::class, 'create'])
+        ->name('content.map-locations.create');
+    Route::post('/admin/map-locations', [MapLocationController::class, 'store'])
+        ->name('content.map-locations.store');
+
+    // READ - one
+    Route::get('/admin/map-locations/{mapLocation}', [MapLocationController::class, 'show'])
+        ->name('content.map-locations.show');
+
+    // UPDATE - form, then save
+    Route::get('/admin/map-locations/{mapLocation}/edit', [MapLocationController::class, 'edit'])
+        ->name('content.map-locations.edit');
+    Route::put('/admin/map-locations/{mapLocation}', [MapLocationController::class, 'update'])
+        ->name('content.map-locations.update');
+
+    // DELETE
+    Route::delete('/admin/map-locations/{mapLocation}', [MapLocationController::class, 'destroy'])
+        ->name('content.map-locations.destroy');
+
+});
+
+// admin, hotel staff and park staff - promotions
+// hotel and park staff manage promotions - below is ofr that
+// admin can manage all of them
+
+Route::middleware(['auth', 'role:admin,hotel_staff,park_staff'])->group(function () {
+
+    Route::get('/admin/promotions', [PromotionController::class, 'index'])
+    ->name('content.promotions.index');
+
+});
+
+
+
+
 /*
-| Admin screens - UC-18. To be added:
-|   GET /admin/promotions      Content\PromotionController
-|   GET /admin/map-locations   Content\MapLocationController
-|
-| These belong inside:
-|   Route::middleware(['auth', 'role:admin'])->group(function () { ... });
-| but 'auth' redirects to a login route that does not exist yet (Faain,
-| BUILD_CONTRACT.md §0). Add the middleware group when login lands - until then
-| the redirect target would 404 and the admin screens would be unreachable.
+| Still to build - BUILD_CONTRACT.md §3, Module 5:
+|   GET /                      Content\HomeController@index      → view 'home'
+|                              (and delete resources/views/scaffold-placeholder.blade.php
+|                              plus the temporary route in routes/web.php when it lands)
+|   /admin/promotions          Content\PromotionController       → full CRUD
+|                              Roles: admin, hotel_staff, park_staff
+|   Cross-module reporting     UC-18 steps 7-8
 */

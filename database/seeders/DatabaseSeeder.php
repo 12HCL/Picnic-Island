@@ -18,6 +18,10 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(RoleSeeder::class);
 
+        // Module 5 (Safhaan): without this the map renders with no clickable points on
+        // a fresh clone. MapLocationSeeder uses updateOrCreate, so it is safe to re-run.
+        $this->call(MapLocationSeeder::class);
+
         $visitorRole = Role::where('name', 'visitor')->firstOrFail();
 
         User::factory()->create([
