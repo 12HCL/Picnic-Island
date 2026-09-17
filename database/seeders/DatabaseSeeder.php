@@ -22,6 +22,9 @@ class DatabaseSeeder extends Seeder
         // a fresh clone. MapLocationSeeder uses updateOrCreate, so it is safe to re-run.
         $this->call(MapLocationSeeder::class);
 
+        // Module 2 (Raafil): seeds Palm Reef Hotel, room types, physical rooms, and staff demo account.
+        $this->call(HotelDemoSeeder::class);
+
         $visitorRole = Role::where('name', 'visitor')->firstOrFail();
 
         User::factory()->create([
