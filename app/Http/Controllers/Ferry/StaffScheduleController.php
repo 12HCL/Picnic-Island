@@ -21,9 +21,15 @@ class StaffScheduleController extends Controller
      */
     public function index(Request $request): View
     {
+        // Same reason as the public timetable: $request->date() throws on input that
+        // filled() happily accepts, so ?date=abc was a 500 rather than an unfiltered list.
+        $request->validate([
+            'status' => ['nullable', 'in:scheduled,departed,cancelled'],
+            'date' => ['nullable', 'date'],
+        ]);
+
         $schedules = FerrySchedule::query()
             ->with('route', 'vessel')
-            ->withCount(['tickets as issued_tickets_count' => fn ($query) => $query->where('status', 'issued')])
             ->when(
                 $request->filled('status'),
                 fn ($query) => $query->where('status', $request->string('status')->toString()),

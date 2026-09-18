@@ -22,6 +22,14 @@ class FerryScheduleController extends Controller
      */
     public function index(Request $request): View
     {
+        // The filters are public query string input. Validated rather than trusted:
+        // $request->date() parses with Carbon and throws on anything it cannot read, which
+        // turned ?date=abc into a 500 on the module's own entry page.
+        $request->validate([
+            'route' => ['nullable', 'integer', 'exists:ferry_routes,id'],
+            'date' => ['nullable', 'date'],
+        ]);
+
         $schedules = FerrySchedule::query()
             ->with('route', 'vessel')
             ->where('status', 'scheduled')
