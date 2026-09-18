@@ -69,6 +69,19 @@
                         </li>
                     @endif
                 @endauth
+
+                {{-- Module 3, Ferry (Naayif). Public like Hotels: browsing the timetable runs
+                     before booking, and BR-01 is checked on the booking page after login. --}}
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('ferry.schedules.*') || request()->routeIs('ferry.tickets.*') ? 'active' : '' }}" href="{{ route('ferry.schedules.index') }}">Ferry</a>
+                </li>
+                @auth
+                    @if (auth()->user()->hasRole('ferry_operator'))
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('ferry.dashboard') || request()->routeIs('ferry.staff.*') ? 'active' : '' }}" href="{{ route('ferry.dashboard') }}">Ferry Operations</a>
+                        </li>
+                    @endif
+                @endauth
             </ul>
 
             <ul class="navbar-nav">
