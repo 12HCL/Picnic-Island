@@ -54,6 +54,9 @@
                                 <li>
                                     <a class="dropdown-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">Users</a>
                                 </li>
+                                <li>
+                                    <a class="dropdown-item {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}" href="{{ route('admin.reports.index') }}">Reports</a>
+                                </li>
                             </ul>
                         </li>
                     @endif

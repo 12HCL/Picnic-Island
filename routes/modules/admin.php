@@ -26,6 +26,7 @@
 */
 
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Visitor\MyBookingsController;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin', [AdminDashboardController::class, 'index'])
         ->name('admin.dashboard');
+    Route::get('/admin/reports', [ReportController::class, 'index'])
+        ->name('admin.reports.index');
     Route::get('/admin/users', [UserController::class, 'index'])
         ->name('admin.users.index');
     Route::get('/admin/users/create', [UserController::class, 'create'])
