@@ -25,6 +25,7 @@
 | Your routes are listed in BUILD_CONTRACT.md §3 - that table is the contract.
 */
 
+use App\Http\Controllers\Content\HomeController;
 use App\Http\Controllers\Content\MapController;
 use App\Http\Controllers\Content\MapLocationController;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,10 @@ use App\Http\Controllers\Content\PromotionController;
 // ── Public (no auth) ─────────────────────────────────────────────────────────
 // UC-08. No login required: the map is what a prospective visitor looks at
 // before they have an account.
+// The front page. Moved here from routes/web.php, where Faain's scaffold placeholder had
+// held GET / since the first commit with a comment asking for exactly this swap.
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
 Route::get('/map', [MapController::class, 'index'])->name('content.map');
 
 // ── Admin — island map management ────────────────────────────────────────────
@@ -117,10 +122,14 @@ Route::middleware(['auth', 'role:admin,hotel_staff,park_staff'])->group(function
 
 /*
 | Still to build - BUILD_CONTRACT.md §3, Module 5:
-|   GET /                      Content\HomeController@index      → view 'home'
-|                              (and delete resources/views/scaffold-placeholder.blade.php
-|                              plus the temporary route in routes/web.php when it lands)
-|   /admin/promotions          Content\PromotionController       → full CRUD
-|                              Roles: admin, hotel_staff, park_staff
+|
+|   The home page CONTENT. GET / is now routed and rendering, and the scaffold
+|   placeholder and its temporary route in web.php are both gone - but home.blade.php is
+|   deliberately a front door, not the content page the contract describes. §3 gives the
+|   view two collections that are NOT passed yet:
+|       ['promotions' => Promotion::live(), 'featuredEvents' => Collection of ParkEvent]
+|   Promotion::live() and Promotion::forModule() are already on the model. Safhaan: this
+|   is left for you.
+|
 |   Cross-module reporting     UC-18 steps 7-8
 */

@@ -18,16 +18,10 @@ use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
-| TEMPORARY - scaffold placeholder only.
-|
-| Per BUILD_CONTRACT.md §3, GET / belongs to Safhaan: Content\HomeController@index
-| rendering home.blade.php. Until he writes it, this holding page keeps the app from
-| 404ing on its own front page. Safhaan: delete this block and add the real route to
-| routes/modules/content.php.
+| GET / has moved to routes/modules/content.php, where it belongs per
+| BUILD_CONTRACT.md §3 — Content\HomeController@index rendering home.blade.php. The
+| scaffold placeholder that stood here is deleted, exactly as the comment on it asked.
 */
-Route::get('/', function () {
-    return view('scaffold-placeholder');
-})->name('home');
 
 /*
 | Authentication - Faain, after the §0 spike (hand-written Auth::attempt() controllers,
