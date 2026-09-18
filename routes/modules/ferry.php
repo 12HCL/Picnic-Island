@@ -31,8 +31,13 @@ use Illuminate\Support\Facades\Route;
 /*
 | Visitor booking journey. BR-01 is enforced inside the controller, not by withholding
 | the route: a visitor with no hotel booking may reach this page and is refused on it.
+|
+| role:visitor answers a different question - who this page is for. Staff issue tickets
+| through counter issuance (UC-14), which is its own controller, so they lose nothing by
+| being kept off the visitor-facing page. Added 18 September after QA finding #3, which
+| recorded every authenticated role reaching this route.
 */
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'role:visitor'])->group(function () {
     Route::get('/ferry/schedules/{schedule}/book', [FerryTicketController::class, 'create'])
         ->name('ferry.tickets.create');
 });
