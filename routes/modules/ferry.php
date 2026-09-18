@@ -25,8 +25,20 @@
 | Your routes are listed in BUILD_CONTRACT.md §3 - that table is the contract.
 */
 
+use App\Http\Controllers\Ferry\FerryScheduleController;
 use App\Http\Controllers\Ferry\FerryTicketController;
+use App\Http\Controllers\Ferry\ManifestController;
+use App\Http\Controllers\Ferry\StaffDashboardController;
+use App\Http\Controllers\Ferry\StaffScheduleController;
+use App\Http\Controllers\Ferry\StaffTicketController;
+use App\Http\Controllers\Ferry\ValidationController;
 use Illuminate\Support\Facades\Route;
+
+// ── Public (no auth) ─────────────────────────────────────────────────────────
+// Browsing runs before booking: a visitor sees what is sailing before being asked
+// to log in. BR-01 is checked on the booking page, after authentication.
+Route::get('/ferry/schedules', [FerryScheduleController::class, 'index'])
+    ->name('ferry.schedules.index');
 
 /*
 | Visitor booking journey. BR-01 is enforced inside the controller, not by withholding
@@ -40,12 +52,50 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth', 'role:visitor'])->group(function () {
     Route::get('/ferry/schedules/{schedule}/book', [FerryTicketController::class, 'create'])
         ->name('ferry.tickets.create');
+    // Payment is a simulated confirmation, so the booking form is also the pay screen and
+    // this is its submit. MASTER_SCHEMA.md §11 writes the ferry_tickets row only here, at
+    // confirmation, so there is no ticket to hang a /ferry/tickets/{ticket}/pay route off —
+    // the same conclusion module 4 reached for park tickets.
+    Route::post('/ferry/tickets', [FerryTicketController::class, 'store'])
+        ->name('ferry.tickets.store');
 });
 
-/*
-| Still to add — BUILD_CONTRACT.md §3:
-|   GET  /ferry/schedules                      FerryScheduleController@index   public
-|   POST /ferry/tickets                        FerryTicketController@store     visitor
-|   GET  /ferry/tickets/{ticket}               FerryTicketController@show      visitor, operator
-|   GET  /staff/ferry ... ->middleware(['auth', 'role:ferry_operator'])
-*/
+// ── Visitor OR ferry_operator — one ticket ───────────────────────────────────
+// The owner sees their own pass; an operator sees any. Role middleware cannot express
+// "the owner or this one staff role", so the check is in the controller — written as
+// "who is allowed", after QA finding #1 showed "who is forbidden" lets roles fall through.
+Route::middleware('auth')->group(function () {
+    Route::get('/ferry/tickets/{ticket}', [FerryTicketController::class, 'show'])
+        ->name('ferry.tickets.show');
+});
+
+// ── Ferry operator ───────────────────────────────────────────────────────────
+Route::middleware(['auth', 'role:ferry_operator'])->group(function () {
+
+    // Staff landing page — named ferry.dashboard to match DashboardController's per-role
+    // redirect map, the same way hotel's and park's are.
+    Route::get('/staff/ferry', [StaffDashboardController::class, 'index'])
+        ->name('ferry.dashboard');
+
+    // Counter issuance — UC-14. Same service, same rules as the visitor's own purchase.
+    Route::get('/staff/ferry/issue', [StaffTicketController::class, 'create'])
+        ->name('ferry.staff.issue');
+    Route::post('/staff/ferry/issue', [StaffTicketController::class, 'store'])
+        ->name('ferry.staff.issue.store');
+
+    // Boarding validation at the jetty.
+    Route::get('/staff/ferry/validate', [ValidationController::class, 'index'])
+        ->name('ferry.staff.validate');
+    Route::post('/staff/ferry/validate', [ValidationController::class, 'check'])
+        ->name('ferry.staff.validate.check');
+    // Recording boarding is a separate, deliberate POST: a lookup must never mutate a pass,
+    // or an operator's mistyped reference becomes impossible to undo.
+    Route::post('/staff/ferry/validate/{ticket}/board', [ValidationController::class, 'board'])
+        ->name('ferry.staff.validate.board');
+
+    Route::get('/staff/ferry/schedules', [StaffScheduleController::class, 'index'])
+        ->name('ferry.staff.schedules.index');
+
+    Route::get('/staff/ferry/manifest/{schedule}', [ManifestController::class, 'show'])
+        ->name('ferry.staff.manifest');
+});

@@ -89,8 +89,7 @@
 
                     @else
 
-                        <form method="POST"
-                              action="{{ \Illuminate\Support\Facades\Route::has('ferry.tickets.store') ? route('ferry.tickets.store') : '' }}">
+                        <form method="POST" action="{{ route('ferry.tickets.store') }}">
                             @csrf
 
                             <input type="hidden" name="ferry_schedule_id" value="{{ $schedule->id }}">
@@ -123,23 +122,38 @@
                                 </div>
                             </div>
 
+                            {{-- Payment is a simulated confirmation, so this form is also the
+                                 pay screen: the ticket row is written only when it is submitted
+                                 (MASTER_SCHEMA.md §11). --}}
+                            <div class="mb-3">
+                                <label for="method" class="form-label">Payment method</label>
+                                <select name="method" id="method"
+                                        class="form-select @error('method') is-invalid @enderror" required>
+                                    @foreach ($methods as $method)
+                                        <option value="{{ $method }}" @selected(old('method') === $method)>
+                                            {{ ucfirst($method) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('method')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-body-tertiary rounded">
+                                <span class="text-body-secondary">Total to pay</span>
+                                <span class="fs-5 fw-semibold">
+                                    {{ number_format($schedule->route->base_fare, 2) }}
+                                </span>
+                            </div>
+
                             @if ($schedule->seatsRemaining() < 1)
                                 <div class="alert alert-danger">
                                     This sailing is full. Please choose another crossing.
                                 </div>
-                            @elseif (! \Illuminate\Support\Facades\Route::has('ferry.tickets.store'))
-                                {{-- @store is the next task: it needs Faain's
-                                     PaymentService::payForFerryTicket(), because a ferry_tickets
-                                     row is written only at payment confirmation. --}}
-                                <button type="submit" class="btn btn-primary" disabled>
-                                    Book this crossing
-                                </button>
-                                <div class="form-text text-warning-emphasis">
-                                    Checkout is not wired up yet.
-                                </div>
                             @else
                                 <button type="submit" class="btn btn-primary">
-                                    Book this crossing
+                                    Confirm and pay
                                 </button>
                             @endif
                         </form>

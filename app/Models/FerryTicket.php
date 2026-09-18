@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class FerryTicket extends Model
 {
@@ -51,5 +52,15 @@ class FerryTicket extends Model
     public function issuedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'issued_by');
+    }
+
+    /**
+     * The simulated payment that brought this ticket into existence. A ticket row is
+     * written only at payment confirmation (MASTER_SCHEMA.md §11), so in practice this is
+     * never null for a ticket that exists.
+     */
+    public function payment(): HasOne
+    {
+        return $this->hasOne(Payment::class);
     }
 }

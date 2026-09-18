@@ -109,10 +109,37 @@ class FerryDemoSeeder extends Seeder
             ],
         );
 
+        // A ferry operator, for the staff side: counter issuance (UC-14), boarding
+        // validation, the timetable and the manifest.
+        User::updateOrCreate(
+            ['email' => 'demo.operator@example.com'],
+            [
+                'name' => 'Omar Operator',
+                'password' => Hash::make(self::DEMO_PASSWORD),
+                'role_id' => Role::where('name', 'ferry_operator')->value('id'),
+                'is_active' => true,
+            ],
+        );
+
+        // A second sailing on the same route, so the timetable and the filters have more
+        // than one row to show.
+        FerrySchedule::updateOrCreate(
+            [
+                'ferry_route_id' => $route->id,
+                'departure_date' => now()->addDays(4)->toDateString(),
+                'departure_time' => '16:00:00',
+            ],
+            [
+                'vessel_id' => $vessel->id,
+                'status' => 'scheduled',
+            ],
+        );
+
         $this->command?->info('Ferry demo data ready.');
         $this->command?->info('  Sailing:  '.$sailingDate.' 09:30, schedule id '.$schedule->id);
         $this->command?->info('  Booking page: /ferry/schedules/'.$schedule->id.'/book');
-        $this->command?->info('  Allowed: demo.allowed@example.com / '.self::DEMO_PASSWORD);
-        $this->command?->info('  Blocked: demo.blocked@example.com / '.self::DEMO_PASSWORD);
+        $this->command?->info('  Allowed:  demo.allowed@example.com / '.self::DEMO_PASSWORD);
+        $this->command?->info('  Blocked:  demo.blocked@example.com / '.self::DEMO_PASSWORD);
+        $this->command?->info('  Operator: demo.operator@example.com / '.self::DEMO_PASSWORD);
     }
 }
