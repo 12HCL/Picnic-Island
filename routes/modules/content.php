@@ -80,10 +80,35 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 // hotel and park staff manage promotions - below is ofr that
 // admin can manage all of them
 
+// The six remaining actions written out the same way as map-locations above, and for the
+// same reason: 'create' is declared before '{promotion}', or the word "create" is captured
+// as an id by the show route. PromotionController already implemented all seven; only
+// index was registered, so every other method was unreachable.
 Route::middleware(['auth', 'role:admin,hotel_staff,park_staff'])->group(function () {
 
+    // READ - list
     Route::get('/admin/promotions', [PromotionController::class, 'index'])
-    ->name('content.promotions.index');
+        ->name('content.promotions.index');
+
+    // CREATE - form, then save
+    Route::get('/admin/promotions/create', [PromotionController::class, 'create'])
+        ->name('content.promotions.create');
+    Route::post('/admin/promotions', [PromotionController::class, 'store'])
+        ->name('content.promotions.store');
+
+    // READ - one
+    Route::get('/admin/promotions/{promotion}', [PromotionController::class, 'show'])
+        ->name('content.promotions.show');
+
+    // UPDATE - form, then save
+    Route::get('/admin/promotions/{promotion}/edit', [PromotionController::class, 'edit'])
+        ->name('content.promotions.edit');
+    Route::put('/admin/promotions/{promotion}', [PromotionController::class, 'update'])
+        ->name('content.promotions.update');
+
+    // DELETE
+    Route::delete('/admin/promotions/{promotion}', [PromotionController::class, 'destroy'])
+        ->name('content.promotions.destroy');
 
 });
 
