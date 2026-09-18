@@ -114,4 +114,32 @@ class FerryTicketController extends Controller
 
         return view('ferry.tickets.show', ['ticket' => $ticket]);
     }
+
+    /**
+     * POST /ferry/tickets/{ticket}/cancel.
+     *
+     * The passenger may cancel their own pass; a ferry operator may cancel any, because a
+     * sailing cannot be cancelled while passes are outstanding (UC-13 E1) and the operator
+     * needs a way to clear them. Same access question as show(), so the same answer.
+     *
+     * Cancelling is a status change that returns the seat, never a delete: the row is
+     * referenced by its payment and appears on the manifest.
+     */
+    public function cancel(Request $request, FerryTicket $ticket): RedirectResponse
+    {
+        $user = $request->user();
+
+        $isOperator = $user->hasRole('ferry_operator');
+        $isOwner = $user->hasRole('visitor') && $ticket->user_id === $user->id;
+
+        abort_unless($isOperator || $isOwner, 403);
+
+        try {
+            $this->issuer->cancel($ticket);
+        } catch (DomainException $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
+        return back()->with('success', "Ferry ticket {$ticket->reference} cancelled. The seat has been returned to the sailing.");
+    }
 }

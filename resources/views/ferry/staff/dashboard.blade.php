@@ -6,9 +6,12 @@
 @section('title', 'Ferry operations')
 @section('content')
 
+{{-- The operator's screens talk constantly about "today" - today's sailings, a pass that is
+     not for today. Nothing said what today was, which left the reader comparing dates
+     against a date they had to remember. --}}
 <x-shared.page-header
     title="Ferry operations"
-    subtitle="Today's sailings, boarding and counter issuance">
+    :subtitle="'Today is '.now()->format('l j F Y').' — sailings, boarding and counter issuance'">
     <a href="{{ route('ferry.staff.issue') }}" class="btn btn-primary">Issue a pass</a>
     <a href="{{ route('ferry.staff.validate') }}" class="btn btn-outline-secondary">Validate</a>
 </x-shared.page-header>

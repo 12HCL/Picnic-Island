@@ -67,6 +67,11 @@ Route::middleware(['auth', 'role:visitor'])->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/ferry/tickets/{ticket}', [FerryTicketController::class, 'show'])
         ->name('ferry.tickets.show');
+    // Cancelling returns the seat to the sailing. A status change through a named POST,
+    // with no DELETE route: the row is referenced by its payment and by the manifest, and
+    // a deleted pass would leave both inconsistent. Same shape as park tickets.
+    Route::post('/ferry/tickets/{ticket}/cancel', [FerryTicketController::class, 'cancel'])
+        ->name('ferry.tickets.cancel');
 });
 
 // ── Ferry operator ───────────────────────────────────────────────────────────
@@ -93,8 +98,25 @@ Route::middleware(['auth', 'role:ferry_operator'])->group(function () {
     Route::post('/staff/ferry/validate/{ticket}/board', [ValidationController::class, 'board'])
         ->name('ferry.staff.validate.board');
 
+    // Timetable, and scheduling. BUILD_CONTRACT.md §3 lists only the index; create, edit
+    // and cancel are an extension of it, because REQUIREMENTS.md role 3 asks the operator to
+    // "manage ferry schedules and availability" and UC-13 documents the flows. Read-only, a
+    // sailing could only ever be created by a seeder. Raised on the daily log.
     Route::get('/staff/ferry/schedules', [StaffScheduleController::class, 'index'])
         ->name('ferry.staff.schedules.index');
+    // 'create' before '{schedule}', or the word "create" is captured as an id.
+    Route::get('/staff/ferry/schedules/create', [StaffScheduleController::class, 'create'])
+        ->name('ferry.staff.schedules.create');
+    Route::post('/staff/ferry/schedules', [StaffScheduleController::class, 'store'])
+        ->name('ferry.staff.schedules.store');
+    Route::get('/staff/ferry/schedules/{schedule}/edit', [StaffScheduleController::class, 'edit'])
+        ->name('ferry.staff.schedules.edit');
+    Route::put('/staff/ferry/schedules/{schedule}', [StaffScheduleController::class, 'update'])
+        ->name('ferry.staff.schedules.update');
+    // Cancelling is a status change through a named POST. There is no DELETE route: every
+    // pass issued references the sailing, and the foreign key is ON DELETE RESTRICT.
+    Route::post('/staff/ferry/schedules/{schedule}/cancel', [StaffScheduleController::class, 'cancel'])
+        ->name('ferry.staff.schedules.cancel');
 
     Route::get('/staff/ferry/manifest/{schedule}', [ManifestController::class, 'show'])
         ->name('ferry.staff.manifest');

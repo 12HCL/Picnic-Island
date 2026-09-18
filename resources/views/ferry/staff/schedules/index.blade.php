@@ -10,6 +10,7 @@
 <x-shared.page-header
     title="Ferry timetable"
     subtitle="Every sailing, with seat occupancy against vessel capacity">
+    <a href="{{ route('ferry.staff.schedules.create') }}" class="btn btn-primary">+ Schedule a sailing</a>
     <a href="{{ route('ferry.dashboard') }}" class="btn btn-outline-secondary">Back to operations</a>
 </x-shared.page-header>
 
@@ -62,7 +63,16 @@
                         $percent = $capacity > 0 ? (int) round($schedule->seats_taken / $capacity * 100) : 0;
                     @endphp
                     <tr>
-                        <td>{{ $schedule->departure_date->format('j M Y') }}</td>
+                        <td>
+                            {{ $schedule->departure_date->format('j M Y') }}
+                            {{-- Marked rather than left for the reader to work out against a
+                                 date the page never shows. --}}
+                            @if ($schedule->departure_date->isToday())
+                                <span class="badge text-bg-primary">Today</span>
+                            @elseif ($schedule->departure_date->isPast())
+                                <span class="badge text-bg-light text-body-secondary">Past</span>
+                            @endif
+                        </td>
                         <td>{{ \Illuminate\Support\Carbon::parse($schedule->departure_time)->format('H:i') }}</td>
                         <td>{{ $schedule->route->origin }} &rarr; {{ $schedule->route->destination }}</td>
                         <td>{{ $schedule->vessel->name }}</td>
@@ -81,8 +91,12 @@
                         </td>
                         <td><x-shared.status-badge :status="$schedule->status" /></td>
                         <td class="text-end">
-                            <a href="{{ route('ferry.staff.manifest', $schedule) }}"
-                               class="btn btn-sm btn-outline-primary">Manifest</a>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{{ route('ferry.staff.manifest', $schedule) }}"
+                                   class="btn btn-outline-primary">Manifest</a>
+                                <a href="{{ route('ferry.staff.schedules.edit', $schedule) }}"
+                                   class="btn btn-outline-secondary">Edit</a>
+                            </div>
                         </td>
                     </tr>
                 @empty

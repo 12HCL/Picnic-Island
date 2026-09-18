@@ -94,7 +94,7 @@
             </ul>
         </div>
 
-        <div class="card shadow-sm">
+        <div class="card shadow-sm mb-4">
             <div class="card-header fw-semibold">How it was issued</div>
             <div class="card-body">
                 @if ($ticket->issuedBy)
@@ -110,6 +110,26 @@
                 @endif
             </div>
         </div>
+
+        @if ($ticket->status === 'issued')
+            <div class="card shadow-sm">
+                <div class="card-header fw-semibold">Cancel this pass</div>
+                <div class="card-body">
+                    <p class="small text-body-secondary">
+                        Cancelling returns the seat to the sailing so someone else can take it.
+                        The pass is not deleted — it stays on the manifest marked cancelled,
+                        with its payment attached.
+                    </p>
+                    <form method="POST" action="{{ route('ferry.tickets.cancel', $ticket) }}"
+                          onsubmit="return confirm('Cancel ticket {{ $ticket->reference }}?');">
+                        @csrf
+                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                            Cancel this ticket
+                        </button>
+                    </form>
+                </div>
+            </div>
+        @endif
     </div>
 
 </div>

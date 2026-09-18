@@ -58,16 +58,29 @@ class StaffTicketController extends Controller
                 ->get();
         }
 
+        $schedules = FerrySchedule::query()
+            ->with('route', 'vessel')
+            ->where('status', 'scheduled')
+            ->whereDate('departure_date', '>=', now()->toDateString())
+            ->orderBy('departure_date')
+            ->orderBy('departure_time')
+            ->get();
+
         return view('ferry.staff.issue', [
             'search' => $search,
             'bookings' => $bookings,
-            'schedules' => FerrySchedule::query()
-                ->with('route', 'vessel')
-                ->where('status', 'scheduled')
-                ->whereDate('departure_date', '>=', now()->toDateString())
-                ->orderBy('departure_date')
-                ->orderBy('departure_time')
-                ->get(),
+            // Sailings this particular booking could authorise, keyed by booking id.
+            // BR-01 is still decided on the server at write time - this only stops the
+            // operator being offered a crossing that is certain to be refused, which is
+            // what happens when a guest's stay is months away from the sailings on offer.
+            'schedulesFor' => $bookings->mapWithKeys(fn (HotelBooking $booking) => [
+                $booking->id => $schedules->filter(
+                    fn (FerrySchedule $schedule) => $schedule->departure_date->betweenIncluded(
+                        $booking->check_in,
+                        $booking->check_out,
+                    ),
+                )->values(),
+            ]),
             'methods' => PaymentService::METHODS,
         ]);
     }
@@ -100,7 +113,16 @@ class StaffTicketController extends Controller
                 $validated['method'],
             );
         } catch (DomainException $e) {
-            return back()->withInput()->with('error', $e->getMessage());
+            // The gateway's own message is written in the second person - "your hotel
+            // booking" - because a visitor normally reads it. At the counter the operator is
+            // not the guest, so name whose booking it is and drop the second person.
+            $reason = str_ireplace(' your ', ' the ', $e->getMessage());
+
+            return back()->withInput()->with(
+                'error',
+                "Cannot issue to {$passenger->name} on booking {$booking->reference}: "
+                    .lcfirst($reason),
+            );
         }
 
         return redirect()

@@ -65,6 +65,11 @@
                             </td>
                             <td>
                                 {{ $schedule->departure_date->format('D j M Y') }}
+                                @if ($schedule->departure_date->isToday())
+                                    <span class="badge text-bg-primary">Today</span>
+                                @elseif ($schedule->departure_date->isTomorrow())
+                                    <span class="badge text-bg-light text-body-secondary">Tomorrow</span>
+                                @endif
                                 <div class="small text-body-secondary">
                                     {{ \Illuminate\Support\Carbon::parse($schedule->departure_time)->format('H:i') }}
                                 </div>

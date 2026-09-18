@@ -69,42 +69,58 @@
                                 </td>
                                 <td><x-shared.status-badge :status="$booking->status" /></td>
                                 <td>
-                                    <form method="POST" action="{{ route('ferry.staff.issue.store') }}"
-                                          class="row g-2">
-                                        @csrf
-                                        <input type="hidden" name="hotel_booking_id" value="{{ $booking->id }}">
+                                    @php($eligible = $schedulesFor[$booking->id] ?? collect())
 
-                                        <div class="col-7">
-                                            <label class="visually-hidden"
-                                                   for="schedule-{{ $booking->id }}">Sailing</label>
-                                            <select name="ferry_schedule_id" id="schedule-{{ $booking->id }}"
-                                                    class="form-select form-select-sm" required>
-                                                @foreach ($schedules as $schedule)
-                                                    <option value="{{ $schedule->id }}">
-                                                        {{ $schedule->departure_date->format('j M') }}
-                                                        {{ \Illuminate\Support\Carbon::parse($schedule->departure_time)->format('H:i') }}
-                                                        — {{ $schedule->route->destination }}
-                                                        ({{ $schedule->seatsRemaining() }} left)
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+                                    {{-- Only sailings inside this guest's stay are offered. BR-01 is
+                                         still decided on the server when Issue is pressed; this stops
+                                         the operator being shown a crossing that is certain to be
+                                         refused, which is what happens when the stay is months away
+                                         from the sailings on sale. --}}
+                                    @if ($eligible->isEmpty())
+                                        <span class="text-body-secondary small">
+                                            No scheduled sailing falls inside this stay
+                                            ({{ $booking->check_in->format('j M') }} to
+                                            {{ $booking->check_out->format('j M Y') }}), so no pass can
+                                            be issued against it.
+                                        </span>
+                                    @else
+                                        <form method="POST" action="{{ route('ferry.staff.issue.store') }}"
+                                              class="row g-2">
+                                            @csrf
+                                            <input type="hidden" name="hotel_booking_id" value="{{ $booking->id }}">
 
-                                        <div class="col-3">
-                                            <label class="visually-hidden"
-                                                   for="method-{{ $booking->id }}">Payment</label>
-                                            <select name="method" id="method-{{ $booking->id }}"
-                                                    class="form-select form-select-sm" required>
-                                                @foreach ($methods as $method)
-                                                    <option value="{{ $method }}">{{ ucfirst($method) }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+                                            <div class="col-7">
+                                                <label class="visually-hidden"
+                                                       for="schedule-{{ $booking->id }}">Sailing</label>
+                                                <select name="ferry_schedule_id" id="schedule-{{ $booking->id }}"
+                                                        class="form-select form-select-sm" required>
+                                                    @foreach ($eligible as $schedule)
+                                                        <option value="{{ $schedule->id }}">
+                                                            {{ $schedule->departure_date->format('j M') }}
+                                                            {{ \Illuminate\Support\Carbon::parse($schedule->departure_time)->format('H:i') }}
+                                                            — {{ $schedule->route->destination }}
+                                                            ({{ $schedule->seatsRemaining() }} left)
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
 
-                                        <div class="col-2">
-                                            <button type="submit" class="btn btn-sm btn-primary w-100">Issue</button>
-                                        </div>
-                                    </form>
+                                            <div class="col-3">
+                                                <label class="visually-hidden"
+                                                       for="method-{{ $booking->id }}">Payment</label>
+                                                <select name="method" id="method-{{ $booking->id }}"
+                                                        class="form-select form-select-sm" required>
+                                                    @foreach ($methods as $method)
+                                                        <option value="{{ $method }}">{{ ucfirst($method) }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+
+                                            <div class="col-2">
+                                                <button type="submit" class="btn btn-sm btn-primary w-100">Issue</button>
+                                            </div>
+                                        </form>
+                                    @endif
                                 </td>
                             </tr>
 

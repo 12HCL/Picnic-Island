@@ -8,9 +8,11 @@
 @section('title', 'Validate a ferry pass')
 @section('content')
 
+{{-- Today's date is stated because a pass is refused for not being for today, and the
+     operator should not have to supply that date from memory to understand the refusal. --}}
 <x-shared.page-header
     title="Validate a ferry pass"
-    subtitle="Check a boarding reference against today's sailing">
+    :subtitle="'A pass is only good for today, '.now()->format('l j F Y')">
     <a href="{{ route('ferry.dashboard') }}" class="btn btn-outline-secondary">Back to operations</a>
 </x-shared.page-header>
 

@@ -277,6 +277,71 @@ class FerryTicketIssueTest extends TestCase
         $this->assertDatabaseCount('ferry_tickets', 1);
     }
 
+    // ── Cancelling through the controller ────────────────────────────────────
+
+    public function test_the_owner_can_cancel_their_own_ticket_and_the_seat_returns(): void
+    {
+        $schedule = $this->schedule();
+        $owner = User::factory()->role('visitor')->create();
+        $ticket = $this->issuer()->issue($schedule, $this->bookingFor($owner)->id, $owner, null, 'card');
+
+        $this->assertSame(1, $schedule->fresh()->seats_taken);
+
+        $this->actingAs($owner)
+            ->post(route('ferry.tickets.cancel', $ticket))
+            ->assertRedirect();
+
+        $this->assertSame('cancelled', $ticket->fresh()->status);
+        $this->assertSame(0, $schedule->fresh()->seats_taken);
+        // Never a delete: the row and its payment survive for the manifest and the accounts.
+        $this->assertDatabaseCount('ferry_tickets', 1);
+        $this->assertSame(1, Payment::where('ferry_ticket_id', $ticket->id)->count());
+    }
+
+    public function test_a_ferry_operator_can_cancel_any_ticket(): void
+    {
+        $schedule = $this->schedule();
+        $owner = User::factory()->role('visitor')->create();
+        $ticket = $this->issuer()->issue($schedule, $this->bookingFor($owner)->id, $owner, null, 'card');
+
+        $this->actingAs(User::factory()->role('ferry_operator')->create())
+            ->post(route('ferry.tickets.cancel', $ticket))
+            ->assertRedirect();
+
+        $this->assertSame('cancelled', $ticket->fresh()->status);
+    }
+
+    public function test_another_visitor_cannot_cancel_someone_elses_ticket(): void
+    {
+        $schedule = $this->schedule();
+        $owner = User::factory()->role('visitor')->create();
+        $ticket = $this->issuer()->issue($schedule, $this->bookingFor($owner)->id, $owner, null, 'card');
+
+        $this->actingAs(User::factory()->role('visitor')->create())
+            ->post(route('ferry.tickets.cancel', $ticket))
+            ->assertForbidden();
+
+        $this->assertSame('issued', $ticket->fresh()->status);
+        $this->assertSame(1, $schedule->fresh()->seats_taken);
+    }
+
+    public function test_a_ticket_cannot_be_cancelled_twice(): void
+    {
+        $schedule = $this->schedule();
+        $owner = User::factory()->role('visitor')->create();
+        $ticket = $this->issuer()->issue($schedule, $this->bookingFor($owner)->id, $owner, null, 'card');
+
+        $this->actingAs($owner)->post(route('ferry.tickets.cancel', $ticket));
+        $this->assertSame(0, $schedule->fresh()->seats_taken);
+
+        // A double submit must not hand the seat back twice.
+        $this->actingAs($owner)
+            ->post(route('ferry.tickets.cancel', $ticket))
+            ->assertSessionHas('error');
+
+        $this->assertSame(0, $schedule->fresh()->seats_taken);
+    }
+
     public function test_a_visitor_may_not_read_another_visitors_ticket(): void
     {
         $schedule = $this->schedule();

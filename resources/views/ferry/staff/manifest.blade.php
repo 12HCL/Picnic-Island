@@ -11,7 +11,7 @@
 
 <x-shared.page-header
     title="Passenger manifest"
-    :subtitle="$schedule->route->origin.' to '.$schedule->route->destination.' — '.$schedule->departure_date->format('D j M Y').' at '.\Illuminate\Support\Carbon::parse($schedule->departure_time)->format('H:i')">
+    :subtitle="$schedule->route->origin.' to '.$schedule->route->destination.' — '.$schedule->departure_date->format('D j M Y').' at '.\Illuminate\Support\Carbon::parse($schedule->departure_time)->format('H:i').($schedule->departure_date->isToday() ? ' (today)' : ', not today — today is '.now()->format('j F Y'))">
     <a href="{{ route('ferry.staff.schedules.index') }}" class="btn btn-outline-secondary">Timetable</a>
 </x-shared.page-header>
 
