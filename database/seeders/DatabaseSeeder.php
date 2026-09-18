@@ -18,6 +18,10 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(RoleSeeder::class);
 
+        // Module 1 (Faain): a fresh clone needs an administrator who can open the admin
+        // dashboard, users, reports, promotions, and map-location management during the demo.
+        $this->call(AdminDemoSeeder::class);
+
         // Module 5 (Safhaan): without this the map renders with no clickable points on
         // a fresh clone. MapLocationSeeder uses updateOrCreate, so it is safe to re-run.
         $this->call(MapLocationSeeder::class);
