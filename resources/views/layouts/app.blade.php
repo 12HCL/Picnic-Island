@@ -17,6 +17,10 @@
 
     {{-- Bootstrap is vendored locally and pinned at 5.3.3. This project still has no build step. --}}
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+    {{-- Site theme: re-colours the vendored Bootstrap and adds the shared page furniture.
+         Loaded after Bootstrap so its variables win, and before @stack so a module's own
+         stylesheet can still override it. --}}
+    <link href="{{ asset('css/site.css') }}" rel="stylesheet">
     @stack('styles')
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}" defer></script>
 </head>

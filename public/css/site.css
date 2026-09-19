@@ -1,0 +1,194 @@
+/*
+    Site theme. Loaded after Bootstrap on every page, so it re-colours the vendored 5.3.3
+    build rather than replacing it - there is still no build step.
+
+    Palette: tropical. Turquoise lagoon, deep sea for bands, warm sand behind everything,
+    with sunset coral and sunny yellow as accents.
+*/
+
+:root {
+    --pi-deep: #0a6d7c;
+    --pi-teal: #14919b;
+    --pi-teal-dark: #0f7680;
+    --pi-sand: #fff6e9;
+    --pi-coral: #ff6b4a;
+    --pi-sun: #ffc145;
+}
+
+body {
+    background-color: var(--pi-sand) !important;
+}
+
+/* ── Bootstrap re-colouring ──────────────────────────────────────────────── */
+
+.bg-primary {
+    background-color: var(--pi-deep) !important;
+}
+
+.btn-primary {
+    --bs-btn-bg: var(--pi-teal);
+    --bs-btn-border-color: var(--pi-teal);
+    --bs-btn-hover-bg: var(--pi-teal-dark);
+    --bs-btn-hover-border-color: var(--pi-teal-dark);
+    --bs-btn-active-bg: var(--pi-teal-dark);
+    --bs-btn-active-border-color: var(--pi-teal-dark);
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--pi-teal);
+    --bs-btn-border-color: var(--pi-teal);
+    --bs-btn-hover-bg: var(--pi-teal);
+    --bs-btn-hover-border-color: var(--pi-teal);
+    --bs-btn-active-bg: var(--pi-teal);
+    --bs-btn-active-border-color: var(--pi-teal);
+}
+
+.text-primary {
+    color: var(--pi-teal) !important;
+}
+
+a {
+    color: var(--pi-teal);
+}
+
+a:hover {
+    color: var(--pi-teal-dark);
+}
+
+.card {
+    border: 0;
+    border-radius: 0.85rem;
+}
+
+.card-img-top {
+    border-top-left-radius: 0.85rem;
+    border-top-right-radius: 0.85rem;
+}
+
+/* ── Full-width sections inside the layout's .container ──────────────────── */
+
+.pi-bleed {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+}
+
+/* ── Hero ────────────────────────────────────────────────────────────────── */
+
+.pi-hero {
+    position: relative;
+    min-height: 26rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #fff;
+    background-size: cover;
+    background-position: center;
+}
+
+.pi-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    /* Warm at the top like late sun, deepening to sea at the bottom so the text reads. */
+    background: linear-gradient(180deg, rgba(255, 138, 76, 0.30) 0%, rgba(10, 109, 124, 0.78) 100%);
+}
+
+.pi-hero > * {
+    position: relative;
+    max-width: 46rem;
+    padding: 4rem 1.5rem;
+}
+
+.pi-hero h1 {
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+.pi-eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* ── Search strip under the hero ─────────────────────────────────────────── */
+
+.pi-strip {
+    background: var(--pi-deep);
+    color: #fff;
+}
+
+.pi-strip .form-label {
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* ── Section headings, as on the reference layouts ───────────────────────── */
+
+.pi-section-title {
+    position: relative;
+    padding-bottom: 0.6rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.pi-section-title::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 3rem;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--pi-coral);
+}
+
+/* ── Cards that lift on hover ────────────────────────────────────────────── */
+
+.pi-lift {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pi-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.75rem 1.5rem rgba(10, 109, 124, 0.18) !important;
+}
+
+.pi-stars {
+    color: var(--pi-sun);
+    letter-spacing: 0.05em;
+}
+
+/* ── Login and register (layouts/guest) ──────────────────────────────────── */
+
+.pi-guest {
+    min-height: 100vh;
+    background: linear-gradient(rgba(10, 109, 124, 0.82), rgba(10, 109, 124, 0.82)),
+                url("../img/photos/home-hero.jpg") center / cover fixed;
+}
+
+/* ── Map band above the footer ───────────────────────────────────────────── */
+
+.pi-map-band {
+    position: relative;
+    min-height: 22rem;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+}
+
+.pi-map-band::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(10, 109, 124, 0.88) 0%, rgba(10, 109, 124, 0.15) 100%);
+}
+
+.pi-map-band > * {
+    position: relative;
+}

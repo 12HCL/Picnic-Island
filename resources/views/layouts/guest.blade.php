@@ -11,19 +11,23 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Welcome') &mdash; {{ config('app.name') }}</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+    {{-- Vendored locally, like layouts/app.blade.php. The CDN tags that were here meant
+         login and register were unstyled on a machine with no internet. --}}
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/site.css') }}" rel="stylesheet">
+    <script src="{{ asset('js/bootstrap.bundle.min.js') }}" defer></script>
 </head>
-<body class="bg-body-tertiary">
+<body class="pi-guest">
 
 <div class="container">
     <div class="row justify-content-center align-items-center min-vh-100">
         <div class="col-sm-10 col-md-7 col-lg-5">
 
             <div class="text-center mb-4">
-                <a class="h4 text-decoration-none fw-semibold" href="{{ url('/') }}">
+                <a class="h3 text-decoration-none fw-semibold text-white" href="{{ url('/') }}">
                     {{ config('app.name') }}
                 </a>
+                <p class="pi-eyebrow text-white-50 mt-2 mb-0">Hotel, ferry and theme park bookings</p>
             </div>
 
             @if (session('success'))
