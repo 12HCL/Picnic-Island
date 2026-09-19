@@ -77,6 +77,14 @@
                                 <li>
                                     <a class="dropdown-item {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}" href="{{ route('admin.reports.index') }}">Reports</a>
                                 </li>
+                                {{-- Both screens existed and were reachable only by typing the
+                                     URL: nothing in the interface linked to them. --}}
+                                <li>
+                                    <a class="dropdown-item {{ request()->routeIs('content.promotions.*') ? 'active' : '' }}" href="{{ route('content.promotions.index') }}">Promotions</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item {{ request()->routeIs('content.map-locations.*') ? 'active' : '' }}" href="{{ route('content.map-locations.index') }}">Map locations</a>
+                                </li>
                             </ul>
                         </li>
                     @endif
@@ -102,6 +110,27 @@
                     @if (auth()->user()->hasRole('ferry_operator'))
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('ferry.dashboard') || request()->routeIs('ferry.staff.*') ? 'active' : '' }}" href="{{ route('ferry.dashboard') }}">Ferry Operations</a>
+                        </li>
+                    @endif
+                @endauth
+
+                {{-- Module 4, Theme Park & Beach (Malaaz). Public like Hotels and Ferry:
+                     a visitor browses what is on before being asked to log in. --}}
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('park.events.*') || request()->routeIs('park.tickets.*') ? 'active' : '' }}" href="{{ route('park.events.index') }}">Park events</a>
+                </li>
+                @auth
+                    @if (auth()->user()->hasRole('park_staff'))
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('park.dashboard') || request()->routeIs('park.staff.*') ? 'active' : '' }}" href="{{ route('park.dashboard') }}">Park Operations</a>
+                        </li>
+                    @endif
+
+                    {{-- Hotel and park staff manage their own module's offers; the route has
+                         allowed them since it was written, but nothing linked to it. --}}
+                    @if (auth()->user()->hasRole('hotel_staff') || auth()->user()->hasRole('park_staff'))
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('content.promotions.*') ? 'active' : '' }}" href="{{ route('content.promotions.index') }}">Promotions</a>
                         </li>
                     @endif
                 @endauth
