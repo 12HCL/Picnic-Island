@@ -1,58 +1,83 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Picnic Island
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A resort island booking and management system, built as the group coursework for
+**UFCF7S-30-2 System Development** (UWE Bristol / Villa College).
 
-## About Laravel
+Visitors browse the island, register an account and book across four services from one
+place. Staff manage their own service area, and administrators oversee users, promotions
+and reporting across all of them.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Modules
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+The system is divided into five modules, one per group member.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| # | Module | Scope | Owner |
+|---|---|---|---|
+| 1 | Auth, Roles & Admin | Registration, login, the five-role permission model, user administration, reporting | Mohamed Faain |
+| 2 | Hotel | Rooms, availability search, bookings, payments, staff desk | Ahmed Raafil |
+| 3 | Ferry | Routes, schedules, ticketing, boarding manifests, ticket validation | Ali Naayif |
+| 4 | Theme Park & Beach | Activities, events, gate sales, capacity limits, ticket validation | Ahmed Malaaz Mohamed |
+| 5 | Content, Map & Reporting | Public home page, island map, promotions | Ahmed Safhaan |
 
-## Learning Laravel
+Routes are split one file per module under `routes/modules/`, so five people can work
+without competing for a single route file.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Stack
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Laravel 13** on **PHP 8.4.15**
+- **Blade** templating with **Bootstrap 5.3.3**
+- **MySQL 8.4** (InnoDB, `utf8mb4_unicode_ci`)
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+There is **no front-end build step** — no Node, no npm, no Vite. Bootstrap is committed
+under `public/css` and `public/js`, so the application runs without an internet connection.
 
-## Agentic Development
+## Running it locally
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+Requires PHP 8.4.x, Composer and a MySQL server. Create an empty database named
+`picnic_island` with collation `utf8mb4_unicode_ci`, then:
 
 ```bash
-composer require laravel/boost --dev
+git clone https://github.com/12HCL/Picnic-Island.git
+cd Picnic-Island
 
-php artisan boost:install
+composer install
+cp .env.example .env        # copy .env.example .env  on Windows
+php artisan key:generate
+php artisan migrate --seed
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+The application is then at <http://127.0.0.1:8000>.
 
-## Contributing
+`--seed` is **not optional**. Migrations create the tables but do not populate the `roles`
+table, and registering an account against an unseeded database fails with a 404 raised from
+inside the controller rather than the router.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+The seeded demonstration administrator is `admin@picnic.test` / `password`. This is local
+demonstration data only and carries no real credentials.
 
-## Code of Conduct
+### After pulling
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+composer install     # if anyone added a package
+php artisan migrate  # if anyone added a migration
+```
 
-## Security Vulnerabilities
+`php artisan migrate:status` shows where your database stands; every row should read `Ran`.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Repository layout
 
-## License
+This repository contains the application only. The project documentation — requirements
+analysis, the master database schema, design models, Scrum records and the final report —
+is maintained separately by the group.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```
+app/Http/Controllers/   one subdirectory per module
+routes/modules/         one route file per module
+database/migrations/    schema, built to the agreed master design
+resources/views/        Blade templates; shared layout and components at the top level
+```
+
+## Authors
+
+Mohamed Faain · Ahmed Raafil · Ali Naayif · Ahmed Malaaz Mohamed · Ahmed Safhaan
