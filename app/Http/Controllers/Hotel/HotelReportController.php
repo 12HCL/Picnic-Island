@@ -16,6 +16,12 @@ class HotelReportController extends Controller
      */
     public function index(Request $request): View
     {
+        // Without this, ?from=abc reached Carbon::parse() in the view and was a 500.
+        $request->validate([
+            'from' => ['nullable', 'date'],
+            'to' => ['nullable', 'date'],
+        ]);
+
         $from = $request->string('from', now()->startOfMonth()->toDateString())->toString();
         $to   = $request->string('to', now()->toDateString())->toString();
 
