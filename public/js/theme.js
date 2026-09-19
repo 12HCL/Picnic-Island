@@ -12,12 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
             toggle.setAttribute('aria-pressed', String(isDark));
             toggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
 
-            const icon = toggle.querySelector('[data-theme-icon]');
             const label = toggle.querySelector('[data-theme-label]');
-
-            if (icon) {
-                icon.textContent = isDark ? '\u2600' : '\u263E';
-            }
 
             if (label) {
                 label.textContent = isDark ? 'Light mode' : 'Dark mode';

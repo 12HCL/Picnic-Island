@@ -129,8 +129,21 @@ a:hover {
 }
 
 .pi-theme-toggle [data-theme-icon] {
-    font-size: 1rem;
+    align-items: center;
+    display: inline-flex;
     line-height: 1;
+}
+
+.pi-theme-icon-sun {
+    display: none;
+}
+
+[data-bs-theme="dark"] .pi-theme-icon-moon {
+    display: none;
+}
+
+[data-bs-theme="dark"] .pi-theme-icon-sun {
+    display: inline-block;
 }
 
 .pi-theme-toggle--guest {
