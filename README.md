@@ -80,4 +80,4 @@ resources/views/        Blade templates; shared layout and components at the top
 
 ## Authors
 
-Mohamed Faain · Ahmed Raafil · Ali Naayif · Ahmed Malaaz Mohamed · Ahmed Safhaan
+Mohamed Faain · Ahmed Raafil · Ali Naayif · Ahmed Malaaz Mohamed · Ahmed Safhaan.
