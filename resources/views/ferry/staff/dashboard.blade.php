@@ -14,6 +14,7 @@
     :subtitle="'Today is '.now()->format('l j F Y').' — sailings, boarding and counter issuance'">
     <a href="{{ route('ferry.staff.issue') }}" class="btn btn-primary">Issue a pass</a>
     <a href="{{ route('ferry.staff.validate') }}" class="btn btn-outline-secondary">Validate</a>
+    <a href="{{ route('ferry.staff.reports.index') }}" class="btn btn-outline-secondary">Trip reports</a>
 </x-shared.page-header>
 
 <div class="row g-3 mb-4">

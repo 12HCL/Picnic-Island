@@ -31,6 +31,7 @@ use App\Http\Controllers\Ferry\ManifestController;
 use App\Http\Controllers\Ferry\StaffDashboardController;
 use App\Http\Controllers\Ferry\StaffScheduleController;
 use App\Http\Controllers\Ferry\StaffTicketController;
+use App\Http\Controllers\Ferry\TripReportController;
 use App\Http\Controllers\Ferry\ValidationController;
 use Illuminate\Support\Facades\Route;
 
@@ -120,4 +121,9 @@ Route::middleware(['auth', 'role:ferry_operator'])->group(function () {
 
     Route::get('/staff/ferry/manifest/{schedule}', [ManifestController::class, 'show'])
         ->name('ferry.staff.manifest');
+
+    // Trip reports - the second half of "passenger list and trip reports", REQUIREMENTS.md
+    // role 3. Hotel and park both had a reports page; ferry did not.
+    Route::get('/staff/ferry/reports', [TripReportController::class, 'index'])
+        ->name('ferry.staff.reports.index');
 });
