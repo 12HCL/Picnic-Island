@@ -5,7 +5,7 @@
 <x-shared.page-header
     :title="'Ticket ' . $ticket->reference"
     :subtitle="$ticket->event->activity->name">
-    <a href="{{ route('park.events.index') }}" class="btn btn-outline-secondary btn-sm">What's on</a>
+    <a href="{{ route('park.events.index') }}" class="btn btn-outline-secondary btn-sm">Park events</a>
 </x-shared.page-header>
 
 <div class="row g-4">

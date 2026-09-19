@@ -26,7 +26,7 @@
         </p>
         <div class="d-flex flex-wrap gap-2 justify-content-center">
             <a href="{{ route('hotel.index') }}" class="btn btn-primary btn-lg px-4">Find a room</a>
-            <a href="{{ route('park.events.index') }}" class="btn btn-outline-light btn-lg px-4">What's on</a>
+            <a href="{{ route('park.events.index') }}" class="btn btn-outline-light btn-lg px-4">Park events</a>
         </div>
     </div>
 </div>

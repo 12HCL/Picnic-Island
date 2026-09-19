@@ -1,9 +1,9 @@
 @extends('layouts.app')
-@section('title', 'What is on')
+@section('title', 'Park events')
 @section('content')
 
 <x-shared.page-header
-    title="What's on at Picnic Island"
+    title="Park events"
     subtitle="Rides, shows and beach events — pick a day and book your place" />
 
 <x-shared.photo-banner src="img/photos/park-events-banner.webp" alt="Aerial view of Picnic Island's roller coaster, beach and dolphin cove" />
