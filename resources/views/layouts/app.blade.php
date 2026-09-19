@@ -15,6 +15,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Home') &mdash; {{ config('app.name') }}</title>
 
+    <script>
+        (() => {
+            const savedTheme = localStorage.getItem('picnic-island-theme');
+            document.documentElement.setAttribute('data-bs-theme', savedTheme ?? 'light');
+        })();
+    </script>
+
     {{-- Bootstrap is vendored locally and pinned at 5.3.3. This project still has no build step. --}}
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
     {{-- Site theme: re-colours the vendored Bootstrap and adds the shared page furniture.
@@ -23,6 +30,7 @@
     <link href="{{ asset('css/site.css') }}" rel="stylesheet">
     @stack('styles')
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}" defer></script>
+    <script src="{{ asset('js/theme.js') }}" defer></script>
 </head>
 <body class="bg-body-tertiary d-flex flex-column min-vh-100">
 
@@ -99,7 +107,13 @@
                 @endauth
             </ul>
 
-            <ul class="navbar-nav">
+            <ul class="navbar-nav align-items-lg-center gap-lg-2">
+                <li class="nav-item">
+                    <button type="button" class="btn btn-outline-light btn-sm pi-theme-toggle" data-theme-toggle aria-pressed="false">
+                        <span data-theme-icon aria-hidden="true">&#9790;</span>
+                        <span data-theme-label>Dark mode</span>
+                    </button>
+                </li>
                 @auth
                     <li class="nav-item">
                         <span class="navbar-text me-3">{{ auth()->user()->name }}</span>

@@ -166,6 +166,42 @@
     transform: rotate(-45deg) scale(1.18);
 }
 
+.map-marker.is-located {
+    z-index: 5;
+}
+
+.map-marker.is-located .map-marker-dot {
+    animation: map-marker-locate 1.35s ease-out;
+}
+
+.map-marker.is-located .map-marker-label {
+    animation: map-label-locate 1.35s ease-out;
+}
+
+@keyframes map-marker-locate {
+    0%, 100% {
+        box-shadow: 0 0 0 .45rem rgba(255, 255, 255, .55), 0 .45rem 1rem rgba(0, 0, 0, .38);
+        transform: rotate(-45deg) scale(1.18);
+    }
+    35% {
+        box-shadow: 0 0 0 1.15rem rgba(255, 193, 69, .55), 0 0 0 2rem rgba(255, 107, 74, .28), 0 .65rem 1.3rem rgba(0, 0, 0, .5);
+        transform: rotate(-45deg) scale(1.65);
+    }
+    70% {
+        box-shadow: 0 0 0 .75rem rgba(255, 255, 255, .7), 0 0 0 1.4rem rgba(255, 193, 69, .28), 0 .55rem 1.1rem rgba(0, 0, 0, .44);
+        transform: rotate(-45deg) scale(1.35);
+    }
+}
+
+@keyframes map-label-locate {
+    0%, 100% { transform: scale(1); }
+    35% {
+        background: #ff6b4a;
+        box-shadow: 0 .5rem 1.2rem rgba(0, 0, 0, .4);
+        transform: scale(1.12);
+    }
+}
+
 .map-marker:focus-visible { outline: 0; }
 .map-marker[hidden] { display: none; }
 
@@ -262,6 +298,53 @@
 .map-place-card:hover .map-place-arrow { transform: translateX(.25rem); }
 .map-search { max-width: 18rem; width: 100%; }
 
+[data-bs-theme="dark"] .map-filter {
+    background: #17282d;
+    border-color: #466066;
+    color: #d9e7e8;
+}
+
+[data-bs-theme="dark"] .map-filter:hover,
+[data-bs-theme="dark"] .map-filter:focus-visible,
+[data-bs-theme="dark"] .map-filter.active {
+    background: #35c4c9;
+    border-color: #35c4c9;
+    color: #071c20;
+}
+
+[data-bs-theme="dark"] .interactive-map,
+[data-bs-theme="dark"] .map-place-card {
+    background: #142226;
+    border-color: #344b51;
+}
+
+[data-bs-theme="dark"] .map-details-category {
+    background: #173b3f;
+    color: #66dedb;
+}
+
+[data-bs-theme="dark"] .map-tip {
+    background: #1b3035;
+    color: #b8c9cb;
+}
+
+[data-bs-theme="dark"] .map-place-category,
+[data-bs-theme="dark"] .map-place-arrow {
+    color: #66dedb;
+}
+
+[data-bs-theme="dark"] .map-place-card:hover,
+[data-bs-theme="dark"] .map-place-card:focus-visible,
+[data-bs-theme="dark"] .map-place-card.is-active {
+    border-color: #35c4c9;
+    box-shadow: 0 .75rem 1.5rem rgba(0, 0, 0, .34);
+}
+
+[data-bs-theme="dark"] .map-compass {
+    background: rgba(20, 34, 38, .94);
+    color: #edf8f8;
+}
+
 @media (max-width: 991.98px) {
     .interactive-map { grid-template-columns: 1fr; }
     .map-canvas { min-height: 24rem; }
@@ -282,4 +365,6 @@
     .map-marker-dot,
     .map-place-card,
     .map-place-arrow { transition: none; }
+    .map-marker.is-located .map-marker-dot,
+    .map-marker.is-located .map-marker-label { animation: none; }
 }

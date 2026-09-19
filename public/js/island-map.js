@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const count = document.querySelector('#map-result-count');
     const noResults = document.querySelector('#map-no-results');
     let activeFilter = 'all';
+    let locateTimer;
 
     const categoryLabel = (value) => value
         .replaceAll('_', ' ')
@@ -39,6 +40,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (moveFocus) {
             marker.focus({ preventScroll: true });
             root.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            window.clearTimeout(locateTimer);
+            markers.forEach((item) => item.classList.remove('is-located'));
+
+            window.setTimeout(() => {
+                // Force a reflow so selecting the same directory card restarts the cue.
+                void marker.offsetWidth;
+                marker.classList.add('is-located');
+                locateTimer = window.setTimeout(() => marker.classList.remove('is-located'), 1500);
+            }, 250);
         }
     };
 

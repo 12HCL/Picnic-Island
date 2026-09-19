@@ -15,8 +15,18 @@
     --pi-sun: #ffc145;
 }
 
+[data-bs-theme="dark"] {
+    --pi-deep: #073b46;
+    --pi-teal: #35c4c9;
+    --pi-teal-dark: #69d9d7;
+    --pi-sand: #101a1d;
+    --pi-coral: #ff8064;
+    --pi-sun: #ffd36a;
+}
+
 body {
     background-color: var(--pi-sand) !important;
+    transition: background-color .2s ease, color .2s ease;
 }
 
 /* ── Bootstrap re-colouring ──────────────────────────────────────────────── */
@@ -63,6 +73,26 @@ a:hover {
 .card-img-top {
     border-top-left-radius: 0.85rem;
     border-top-right-radius: 0.85rem;
+}
+
+.pi-theme-toggle {
+    align-items: center;
+    display: inline-flex;
+    gap: .4rem;
+    justify-content: center;
+    min-width: 7.3rem;
+}
+
+.pi-theme-toggle [data-theme-icon] {
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.pi-theme-toggle--guest {
+    position: fixed;
+    right: 1rem;
+    top: 1rem;
+    z-index: 5;
 }
 
 /* ── Full-width sections inside the layout's .container ──────────────────── */
@@ -191,4 +221,35 @@ a:hover {
 
 .pi-map-band > * {
     position: relative;
+}
+
+/* Dark mode keeps the tropical teal/coral identity while reducing glare. */
+[data-bs-theme="dark"] .card,
+[data-bs-theme="dark"] .dropdown-menu,
+[data-bs-theme="dark"] .list-group-item {
+    background-color: #172529;
+}
+
+[data-bs-theme="dark"] .bg-white,
+[data-bs-theme="dark"] .bg-light {
+    background-color: #1b2c30 !important;
+}
+
+[data-bs-theme="dark"] .text-dark {
+    color: #e8f3f3 !important;
+}
+
+[data-bs-theme="dark"] .pi-lift:hover {
+    box-shadow: 0 .75rem 1.5rem rgba(0, 0, 0, .38) !important;
+}
+
+[data-bs-theme="dark"] .pi-guest {
+    background-image: linear-gradient(rgba(3, 31, 38, .9), rgba(3, 31, 38, .9)),
+                      url("../img/photos/home-hero.jpg");
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body {
+        transition: none;
+    }
 }
