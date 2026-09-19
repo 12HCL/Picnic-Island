@@ -53,8 +53,21 @@ The application is then at <http://127.0.0.1:8000>.
 table, and registering an account against an unseeded database fails with a 404 raised from
 inside the controller rather than the router.
 
-The seeded demonstration administrator is `admin@picnic.test` / `password`. This is local
+### Demo accounts
+
+Seeding creates one account per role. Every password is `password`. This is local
 demonstration data only and carries no real credentials.
+
+| Role | Email | Use it to see |
+|---|---|---|
+| Admin | `admin@picnic.test` | Users, reports, promotions, map locations |
+| Hotel staff | `hotel.staff@picnic.test` | Rooms, bookings, hotel reports |
+| Ferry operator | `demo.operator@example.com` | Timetable, counter issuance, validation, manifest, trip reports |
+| Park staff | `park.staff@picnic.test` | Activities, events, gate sales, capacity, park reports |
+| Visitor with a hotel booking | `demo.allowed@example.com` | BR-01 allowing a ferry ticket |
+| Visitor without a hotel booking | `demo.blocked@example.com` | BR-01 refusing a ferry ticket |
+| Visitor | `hotel.visitor@picnic.test` | Booking a hotel stay |
+| Visitor | `park.visitor@picnic.test` | Park tickets and events |
 
 ### After pulling
 
