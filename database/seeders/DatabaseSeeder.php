@@ -36,6 +36,10 @@ class DatabaseSeeder extends Seeder
         // Module 4 (Malaaz): park activities, events, sales and a park staff account.
         $this->call(ParkDemoSeeder::class);
 
+        // Module 5 (Safhaan): offers for the front page and the promotions screens. Runs last
+        // because each promotion is attributed to the staff member the earlier seeders create.
+        $this->call(PromotionDemoSeeder::class);
+
         $visitorRole = Role::where('name', 'visitor')->firstOrFail();
 
         User::factory()->create([
