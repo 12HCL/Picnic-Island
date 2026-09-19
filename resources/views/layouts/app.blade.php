@@ -17,6 +17,7 @@
 
     {{-- Bootstrap is vendored locally and pinned at 5.3.3. This project still has no build step. --}}
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+    @stack('styles')
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}" defer></script>
 </head>
 <body class="bg-body-tertiary d-flex flex-column min-vh-100">
@@ -154,5 +155,6 @@
     </div>
 </footer>
 
+@stack('scripts')
 </body>
 </html>

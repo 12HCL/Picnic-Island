@@ -34,7 +34,7 @@
             </div>
         </div>
         <div class="col-lg-5 d-none d-lg-block">
-            <img src="{{ asset('img/island-map.svg') }}" class="img-fluid rounded" alt="">
+            <img src="{{ asset('img/island-map-v2.png') }}" class="img-fluid rounded" alt="Illustrated aerial view of Picnic Island">
         </div>
     </div>
 </div>

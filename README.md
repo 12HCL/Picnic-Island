@@ -71,6 +71,11 @@ This repository contains the application only. The project documentation — req
 analysis, the master database schema, design models, Scrum records and the final report —
 is maintained separately by the group.
 
+This repository is the editable standalone submission application. It was initially split
+from the combined group repository on 19 September 2026, but direct post-split UI,
+presentation and submission fixes are now maintained here. Do not replace its history with
+an automatic subtree refresh without first reconciling and preserving these direct changes.
+
 ```
 app/Http/Controllers/   one subdirectory per module
 routes/modules/         one route file per module

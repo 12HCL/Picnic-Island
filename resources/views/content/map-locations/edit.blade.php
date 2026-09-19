@@ -38,7 +38,7 @@
                     Save to move the marker.
                 </p>
                 <div class="position-relative">
-                    <img src="{{ asset('img/island-map.svg') }}"
+                    <img src="{{ asset('img/island-map-v2.png') }}"
                          class="img-fluid rounded border d-block"
                          alt="Island map with this location marked">
                     <span class="position-absolute badge rounded-pill bg-danger shadow"

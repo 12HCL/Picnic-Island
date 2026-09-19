@@ -9,7 +9,7 @@ use Illuminate\Database\Seeder;
  * Module 5 — Content, Map & Reporting. Owner: Ahmed Safhaan.
  *
  * Demonstration data for the island map. The pos_x / pos_y percentages match the
- * landmarks drawn on public/img/island-map.svg, so each marker lands on the thing
+ * landmarks drawn on public/img/island-map-v2.png, so each marker lands on the thing
  * it names.
  *
  * Run on its own, so it does not touch the shared DatabaseSeeder:

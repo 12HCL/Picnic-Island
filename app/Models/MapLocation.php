@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * MASTER_SCHEMA.md §16 — Module 5, owner Ahmed Safhaan.
  *
- * One row = one clickable marker on the static island map image.
+ * One row = one interactive marker on the illustrated island map image.
  * pos_x / pos_y are percentages of the image (0–100), not pixels.
  */
 class MapLocation extends Model
