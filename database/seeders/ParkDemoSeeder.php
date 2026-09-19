@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Hash;
  * sales channels represented — including a sold-out event, because "this is full" is a state
  * the screens have to show.
  *
- * Run on its own, so it does not touch the shared DatabaseSeeder:
+ * Called by DatabaseSeeder on migrate --seed. It can also be run on its own:
  *     php artisan db:seed --class=ParkDemoSeeder
  *
  * Every row is keyed with updateOrCreate or firstOrCreate, so running it twice updates

@@ -7,6 +7,7 @@ use App\Models\FerrySchedule;
 use App\Models\Hotel;
 use App\Models\HotelBooking;
 use App\Models\Role;
+use App\Models\Room;
 use App\Models\User;
 use App\Models\Vessel;
 use Illuminate\Database\Seeder;
@@ -18,7 +19,7 @@ use Illuminate\Support\Facades\Hash;
  * Demonstration data for the BR-01 walkthrough, and for the two screenshots the testing
  * chapter needs: a visitor who may travel and a visitor who may not.
  *
- * Run on its own, so it does not touch the shared DatabaseSeeder:
+ * Called by DatabaseSeeder on migrate --seed. It can also be run on its own:
  *     php artisan db:seed --class=FerryDemoSeeder
  *
  * Every row is keyed with updateOrCreate or firstOrCreate, so running it twice updates
@@ -85,7 +86,8 @@ class FerryDemoSeeder extends Seeder
             ],
         );
 
-        HotelBooking::updateOrCreate(
+        // Four nights in Standard Room 101 at MVR 850, so the total matches the room.
+        $booking = HotelBooking::updateOrCreate(
             ['reference' => 'PIB-HB-DEMO01'],
             [
                 'user_id' => $allowed->id,
@@ -93,10 +95,20 @@ class FerryDemoSeeder extends Seeder
                 'check_in' => now()->addDays(2)->toDateString(),
                 'check_out' => now()->addDays(6)->toDateString(),
                 'guests' => 2,
-                'total_amount' => 780.00,
+                'total_amount' => 3400.00,
                 'status' => 'confirmed',
             ],
         );
+
+        // Room 101 comes from HotelDemoSeeder. Run on its own, this seeder skips the room
+        // rather than failing, because BR-01 only needs the booking.
+        $room = Room::where('hotel_id', $hotel->id)->where('room_number', '101')->first();
+
+        if ($room) {
+            $booking->rooms()->syncWithoutDetaching([
+                $room->id => ['nightly_rate' => 850.00, 'nights' => 4],
+            ]);
+        }
 
         // Visitor B — no hotel booking at all. Must be refused.
         User::updateOrCreate(

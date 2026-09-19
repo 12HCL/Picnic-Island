@@ -29,6 +29,13 @@ class DatabaseSeeder extends Seeder
         // Module 2 (Raafil): seeds Palm Reef Hotel, room types, physical rooms, and staff demo account.
         $this->call(HotelDemoSeeder::class);
 
+        // Module 3 (Naayif): sailings, the BR-01 allowed/blocked visitors and a ferry operator.
+        // Runs after the hotel seeder because it reuses Palm Reef Hotel for the demo booking.
+        $this->call(FerryDemoSeeder::class);
+
+        // Module 4 (Malaaz): park activities, events, sales and a park staff account.
+        $this->call(ParkDemoSeeder::class);
+
         $visitorRole = Role::where('name', 'visitor')->firstOrFail();
 
         User::factory()->create([
