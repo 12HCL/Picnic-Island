@@ -29,6 +29,28 @@ body {
     transition: background-color .2s ease, color .2s ease;
 }
 
+@keyframes pi-rise-in {
+    from {
+        opacity: 0;
+        transform: translateY(1rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pi-card-in {
+    from {
+        opacity: 0;
+        transform: translateY(.75rem) scale(.985);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
 /* ── Bootstrap re-colouring ──────────────────────────────────────────────── */
 
 .bg-primary {
@@ -55,6 +77,29 @@ body {
 
 .text-primary {
     color: var(--pi-teal) !important;
+}
+
+.btn {
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease,
+                box-shadow .15s ease, transform .12s ease;
+}
+
+.btn:not(:disabled):active {
+    transform: scale(.97);
+}
+
+.navbar .nav-link {
+    background-image: linear-gradient(90deg, var(--pi-sun), var(--pi-coral));
+    background-position: left calc(100% - .22rem);
+    background-repeat: no-repeat;
+    background-size: 0 2px;
+    transition: background-size .18s ease, color .18s ease;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link:focus-visible,
+.navbar .nav-link.active {
+    background-size: 100% 2px;
 }
 
 a {
@@ -125,6 +170,7 @@ a:hover {
 }
 
 .pi-hero > * {
+    animation: pi-rise-in .65s cubic-bezier(.2, .7, .2, 1) both;
     position: relative;
     max-width: 46rem;
     padding: 4rem 1.5rem;
@@ -180,8 +226,15 @@ a:hover {
 /* ── Cards that lift on hover ────────────────────────────────────────────── */
 
 .pi-lift {
+    animation: pi-card-in .5s cubic-bezier(.2, .7, .2, 1) backwards;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
+
+.row > :nth-child(2) .pi-lift { animation-delay: .07s; }
+.row > :nth-child(3) .pi-lift { animation-delay: .14s; }
+.row > :nth-child(4) .pi-lift { animation-delay: .21s; }
+.row > :nth-child(5) .pi-lift { animation-delay: .28s; }
+.row > :nth-child(6) .pi-lift { animation-delay: .35s; }
 
 .pi-lift:hover {
     transform: translateY(-4px);
@@ -198,7 +251,7 @@ a:hover {
 .pi-guest {
     min-height: 100vh;
     background: linear-gradient(rgba(10, 109, 124, 0.82), rgba(10, 109, 124, 0.82)),
-                url("../img/photos/home-hero.jpg") center / cover fixed;
+                url("../img/photos/home-hero.webp") center / cover fixed;
 }
 
 /* ── Map band above the footer ───────────────────────────────────────────── */
@@ -245,11 +298,26 @@ a:hover {
 
 [data-bs-theme="dark"] .pi-guest {
     background-image: linear-gradient(rgba(3, 31, 38, .9), rgba(3, 31, 38, .9)),
-                      url("../img/photos/home-hero.jpg");
+                      url("../img/photos/home-hero.webp");
 }
 
 @media (prefers-reduced-motion: reduce) {
     body {
         transition: none;
+    }
+
+    .btn,
+    .navbar .nav-link,
+    .pi-lift {
+        transition: none;
+    }
+
+    .pi-hero > *,
+    .pi-lift {
+        animation: none;
+    }
+
+    .btn:not(:disabled):active {
+        transform: none;
     }
 }

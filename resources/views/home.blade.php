@@ -16,7 +16,7 @@
 @section('content')
 
 {{-- ── Hero ─────────────────────────────────────────────────────────────── --}}
-<div class="pi-bleed pi-hero mb-0" style="background-image: url('{{ asset('img/photos/home-hero.jpg') }}')">
+<div class="pi-bleed pi-hero mb-0" style="background-image: url('{{ asset('img/photos/home-hero.webp') }}')">
     <div>
         <span class="pi-eyebrow">A picnic island in the Maldives</span>
         <h1 class="mt-2 mb-3">Stay, cross, and spend the day</h1>
@@ -166,7 +166,7 @@
 @endif
 
 {{-- ── The island map, as a band above the footer ───────────────────────── --}}
-<div class="pi-bleed pi-map-band" style="background-image: url('{{ asset('img/island-map-v2.png') }}')">
+<div class="pi-bleed pi-map-band" style="background-image: url('{{ asset('img/island-map-v2.webp') }}')">
     <div class="container">
         <div class="col-lg-6 text-white py-5">
             <span class="pi-eyebrow">Plan your island day</span>

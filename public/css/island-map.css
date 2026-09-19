@@ -45,6 +45,16 @@
 .map-hero-stat strong { font-size: 2rem; line-height: 1; }
 .map-hero-stat span { font-size: .8rem; margin-top: .35rem; }
 
+.map-hero > div:first-child {
+    animation: pi-rise-in .55s cubic-bezier(.2, .7, .2, 1) both;
+    position: relative;
+    z-index: 1;
+}
+
+.map-hero-stat {
+    animation: pi-rise-in .55s .1s cubic-bezier(.2, .7, .2, 1) both;
+}
+
 .map-toolbar {
     align-items: center;
     display: flex;
@@ -241,6 +251,21 @@
     position: relative;
 }
 
+.map-details.is-refreshing > :not(.map-details-accent) {
+    animation: map-details-refresh .32s ease-out both;
+}
+
+@keyframes map-details-refresh {
+    from {
+        opacity: .25;
+        transform: translateX(.6rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
 .map-details-accent {
     background: linear-gradient(90deg, #087f8c, #f2a65a);
     height: .35rem;
@@ -270,6 +295,11 @@
     border-radius: 1rem;
     color: inherit;
     transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+.map-place-card:active,
+.map-place-card:hover:active {
+    transform: translateY(-1px) scale(.985);
 }
 
 .map-place-card:hover,
@@ -367,4 +397,8 @@
     .map-place-arrow { transition: none; }
     .map-marker.is-located .map-marker-dot,
     .map-marker.is-located .map-marker-label { animation: none; }
+    .map-hero > div:first-child,
+    .map-hero-stat,
+    .map-details.is-refreshing > :not(.map-details-accent) { animation: none; }
+    .map-place-card:active { transform: none; }
 }

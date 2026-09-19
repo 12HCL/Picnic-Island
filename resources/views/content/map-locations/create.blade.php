@@ -34,7 +34,7 @@
                     Read the position off this image. Left edge is 0%, right edge 100%;
                     top is 0%, bottom 100%.
                 </p>
-                <img src="{{ asset('img/island-map-v2.png') }}"
+                <img src="{{ asset('img/island-map-v2.webp') }}"
                      class="img-fluid rounded border"
                      alt="Island map, for choosing a position">
             </div>

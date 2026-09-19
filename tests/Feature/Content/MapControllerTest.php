@@ -32,7 +32,7 @@ class MapControllerTest extends TestCase
         $this->get(route('content.map'))
             ->assertOk()
             ->assertSee('Explore Picnic Island')
-            ->assertSee('img/island-map-v2.png', false)
+            ->assertSee('img/island-map-v2.webp', false)
             ->assertSee('data-interactive-map', false)
             ->assertSee('data-location-id="'.$visible->id.'"', false)
             ->assertSee('Coral Beach')

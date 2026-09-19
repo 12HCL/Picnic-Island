@@ -11,7 +11,7 @@
     title="Ferry sailings"
     subtitle="Crossings between the mainland and Picnic Island" />
 
-<x-shared.photo-banner src="img/photos/ferry-jetty.jpg" alt="The ferry jetty at sunset" />
+<x-shared.photo-banner src="img/photos/ferry-jetty.webp" alt="The ferry jetty at sunset" />
 
 <div class="card shadow-sm mb-4">
     <div class="card-body">

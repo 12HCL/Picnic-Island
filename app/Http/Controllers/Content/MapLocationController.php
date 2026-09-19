@@ -15,7 +15,7 @@ use Illuminate\View\View;
  * Admin management of the markers on the static island map.
  * BUILD_CONTRACT.md §3, Module 5. MASTER_SCHEMA.md §16. UC-18 steps 1–4.
  *
- * A row here is one interactive point on public/img/island-map-v2.png. pos_x and pos_y are
+ * A row here is one interactive point on public/img/island-map-v2.webp. pos_x and pos_y are
  * PERCENTAGES of the image (0–100), not pixels and not latitude/longitude — the Dean
  * excluded a maps API, and percentages keep the markers correct at any rendered size.
  *

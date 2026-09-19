@@ -6,7 +6,7 @@
     title="What's on at Picnic Island"
     subtitle="Rides, shows and beach events — pick a day and book your place" />
 
-<x-shared.photo-banner src="img/photos/theme-park.jpg" alt="Riders on a roller coaster at sunset" />
+<x-shared.photo-banner src="img/photos/park-events-banner.webp" alt="Aerial view of Picnic Island's roller coaster, beach and dolphin cove" />
 
 {{-- Filters --}}
 <div class="card shadow-sm mb-4">

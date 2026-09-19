@@ -35,7 +35,7 @@ class MapController extends Controller
 
         return view('map', [
             'locations' => $locations,
-            'mapImage' => 'img/island-map-v2.png',
+            'mapImage' => 'img/island-map-v2.webp',
         ]);
     }
 }

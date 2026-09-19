@@ -12,10 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const title = document.querySelector('#map-details-title');
     const category = document.querySelector('#map-details-category');
     const description = document.querySelector('#map-details-description');
+    const detailsPanel = document.querySelector('#map-details');
     const count = document.querySelector('#map-result-count');
     const noResults = document.querySelector('#map-no-results');
     let activeFilter = 'all';
     let locateTimer;
+    let detailsTimer;
 
     const categoryLabel = (value) => value
         .replaceAll('_', ' ')
@@ -36,6 +38,15 @@ document.addEventListener('DOMContentLoaded', () => {
         title.textContent = marker.dataset.name;
         category.textContent = categoryLabel(marker.dataset.category);
         description.textContent = marker.dataset.description;
+
+        window.clearTimeout(detailsTimer);
+        detailsPanel?.classList.remove('is-refreshing');
+
+        if (detailsPanel) {
+            void detailsPanel.offsetWidth;
+            detailsPanel.classList.add('is-refreshing');
+            detailsTimer = window.setTimeout(() => detailsPanel.classList.remove('is-refreshing'), 360);
+        }
 
         if (moveFocus) {
             marker.focus({ preventScroll: true });

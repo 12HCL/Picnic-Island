@@ -69,7 +69,7 @@
             <div class="card-body">
                 <h2 class="h6 mb-3">Position on the map</h2>
                 <div class="position-relative">
-                    <img src="{{ asset('img/island-map-v2.png') }}"
+                    <img src="{{ asset('img/island-map-v2.webp') }}"
                          class="img-fluid rounded border d-block"
                          alt="Island map with {{ $location->name }} marked">
                     <span class="position-absolute badge rounded-pill bg-danger shadow"
