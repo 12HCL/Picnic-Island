@@ -65,7 +65,9 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    // The island is in the Maldives (UTC+5). On UTC, "today" lagged five hours behind, so
+    // check-ins, sailings and boarding for the local day were wrong between 00:00 and 05:00.
+    'timezone' => 'Indian/Maldives',
 
     /*
     |--------------------------------------------------------------------------
