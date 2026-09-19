@@ -13,9 +13,13 @@
     {{-- Hotel info --}}
     <div class="col-lg-4">
         <div class="card shadow-sm h-100">
+            @if ($photo = config('photos.hotels.'.$hotel->name))
+                <img src="{{ asset($photo) }}" class="card-img-top" alt="{{ $hotel->name }}"
+                     style="height: 14rem; object-fit: cover;">
+            @endif
             <div class="card-body">
                 <h2 class="h4">{{ $hotel->name }}</h2>
-                <p class="text-warning fs-5 mb-1">
+                <p class="pi-stars fs-5 mb-1">
                     @for ($i = 0; $i < $hotel->star_rating; $i++)★@endfor
                 </p>
                 <p class="text-muted small mb-3">{{ $hotel->address }}</p>
@@ -26,6 +30,9 @@
 
     {{-- Room types --}}
     <div class="col-lg-8">
+        @if ($roomPhoto = config('photos.rooms.'.$hotel->name))
+            <x-shared.photo-banner :src="$roomPhoto" :alt="'A guest room at '.$hotel->name" height="14rem" />
+        @endif
         <h3 class="h5 mb-3">Room Types</h3>
         @forelse ($hotel->roomTypes as $type)
             <div class="card mb-3 shadow-sm">

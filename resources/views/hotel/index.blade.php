@@ -2,9 +2,9 @@
 @section('title', 'Hotels')
 @section('content')
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="h3 mb-0">Hotels</h1>
-</div>
+<x-shared.page-header
+    title="Hotels"
+    subtitle="Where to stay on the island — book a room before your ferry crossing" />
 
 @if ($hotels->isEmpty())
     <div class="alert alert-info">No hotels are listed yet.</div>
@@ -12,11 +12,15 @@
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         @foreach ($hotels as $hotel)
             <div class="col">
-                <div class="card h-100 shadow-sm">
+                <div class="card h-100 shadow-sm pi-lift">
+                    @if ($photo = config('photos.hotels.'.$hotel->name))
+                        <img src="{{ asset($photo) }}" class="card-img-top" alt="{{ $hotel->name }}"
+                             style="height: 12rem; object-fit: cover;">
+                    @endif
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-1">
                             <h5 class="card-title mb-0">{{ $hotel->name }}</h5>
-                            <span class="badge bg-warning text-dark ms-2">
+                            <span class="pi-stars ms-2">
                                 @for ($i = 0; $i < $hotel->star_rating; $i++)★@endfor
                             </span>
                         </div>

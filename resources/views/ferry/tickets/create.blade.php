@@ -26,6 +26,8 @@
         {{-- The sailing --}}
         <div class="col-lg-5">
             <div class="card shadow-sm">
+                <img src="{{ asset('img/photos/ferry-crossing.jpg') }}" class="card-img-top"
+                     alt="A ferry crossing at sunset" style="height: 12rem; object-fit: cover; object-position: center 70%;">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span class="fw-semibold">Sailing details</span>
                     <x-shared.status-badge :status="$schedule->status" />
