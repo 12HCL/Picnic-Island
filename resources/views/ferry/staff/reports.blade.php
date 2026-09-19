@@ -76,7 +76,7 @@
                             ? round($sailing->sold_count / $sailing->vessel->capacity * 100)
                             : 0;
                     @endphp
-                    <tr @class(['table-light text-body-secondary' => $sailing->status === 'cancelled'])>
+                    <tr @class(['pi-row-void' => $sailing->status === 'cancelled'])>
                         <td>
                             {{ $sailing->departure_date->format('D j M') }}
                             <div class="small text-body-secondary">

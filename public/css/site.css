@@ -259,6 +259,14 @@ a:hover {
     letter-spacing: 0.05em;
 }
 
+/* A voided row - a cancelled pass or sailing. Dimmed rather than shaded, because
+   Bootstrap's .table-light is a fixed light colour and stayed light in dark mode,
+   leaving muted text sitting on a pale background. */
+
+.pi-row-void {
+    opacity: 0.6;
+}
+
 /* ── Login and register (layouts/guest) ──────────────────────────────────── */
 
 .pi-guest {

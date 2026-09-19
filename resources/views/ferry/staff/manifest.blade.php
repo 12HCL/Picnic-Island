@@ -54,7 +54,7 @@
             </thead>
             <tbody>
                 @forelse ($tickets as $ticket)
-                    <tr @class(['table-light text-body-secondary' => $ticket->status === 'cancelled'])>
+                    <tr @class(['pi-row-void' => $ticket->status === 'cancelled'])>
                         <td class="font-monospace">{{ $ticket->reference }}</td>
                         <td>
                             {{ $ticket->user->name }}
