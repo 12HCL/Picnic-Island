@@ -10,6 +10,7 @@ use App\Models\Role;
 use App\Models\Room;
 use App\Models\User;
 use App\Models\Vessel;
+use App\Services\Ferry\FerryTicketIssueService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -146,6 +147,58 @@ class FerryDemoSeeder extends Seeder
                 'status' => 'scheduled',
             ],
         );
+
+        // ── Passengers, so the manifest and the trip reports have something to report ──
+        //
+        // Sold through FerryTicketIssueService rather than inserted, so seats_taken, the
+        // payments rows and BR-01 are all consistent by construction. One pass is boarded
+        // and one cancelled: the manifest lists cancelled passes rather than hiding them,
+        // and the trip report has to exclude them from sold and from revenue.
+        $passengers = [
+            ['Hawwa Ibrahim', 'hawwa.demo@example.com', 'PIB-HB-DEMO02', 'boarded'],
+            ['Yoosuf Adam', 'yoosuf.demo@example.com', 'PIB-HB-DEMO03', 'issued'],
+            ['Mariyam Saeed', 'mariyam.demo@example.com', 'PIB-HB-DEMO04', 'cancelled'],
+        ];
+
+        $issuer = app(FerryTicketIssueService::class);
+
+        foreach ($passengers as [$name, $email, $bookingReference, $finalStatus]) {
+            $passenger = User::updateOrCreate(
+                ['email' => $email],
+                [
+                    'name' => $name,
+                    'password' => Hash::make(self::DEMO_PASSWORD),
+                    'role_id' => $visitorRoleId,
+                    'is_active' => true,
+                ],
+            );
+
+            $stay = HotelBooking::updateOrCreate(
+                ['reference' => $bookingReference],
+                [
+                    'user_id' => $passenger->id,
+                    'hotel_id' => $hotel->id,
+                    'check_in' => now()->addDay()->toDateString(),
+                    'check_out' => now()->addDays(6)->toDateString(),
+                    'guests' => 2,
+                    'total_amount' => 3400.00,
+                    'status' => 'confirmed',
+                ],
+            );
+
+            // Seeders re-run; only sell to someone who is not already holding a pass.
+            if ($schedule->tickets()->where('user_id', $passenger->id)->exists()) {
+                continue;
+            }
+
+            $ticket = $issuer->issue($schedule, $stay->id, $passenger, null, 'card');
+
+            if ($finalStatus === 'cancelled') {
+                $issuer->cancel($ticket);
+            } elseif ($finalStatus === 'boarded') {
+                $ticket->update(['status' => 'boarded']);
+            }
+        }
 
         $this->command?->info('Ferry demo data ready.');
         $this->command?->info('  Sailing:  '.$sailingDate.' 09:30, schedule id '.$schedule->id);
