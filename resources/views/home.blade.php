@@ -49,6 +49,66 @@
     </span>
 </div>
 
+@if ($promotions->isNotEmpty())
+    <h2 class="h5 mb-3">Current offfers<h2>
+
+    <div class="row g-3 mb-4">
+        @foreach ($promotions as $promotion)
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    @if ($promotion->image_path)
+                        <img src="{{ asset('storage/' . $promotion->image_path) }}"
+                            class="card-img-top" alt="">
+                    @endif
+
+                    <div class="card-body">
+                        <span class="badge text-bg-light border text-capitalize mb-2">
+                            {{ $promotion->module }}
+                        </span>
+                        <h3 class="h6">{{ $promotion->title }}</h3>
+                        <p class="small text-body-secondary mb-0">{{ $promotion->body }}</P>
+                    </div>
+
+                    <div class="card-footer  bg-transparent small text-body-secondary">
+                        Until {{ $promotion->ends_on->format('j M Y') }}
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    </div>
+@endif
+
+@if ($featuredEvents->isNotEmpty())
+    <h2 class="h5 mb-3">Coming up at the park</h2>
+    
+    <div class="row g-3 mb-4">
+        @foreach ($featuredEvents as $event)
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h3 class="h6 mb-1">{{ $event->activity->name }}</h3>
+                        <p class="small text-body-secondary mb-2">
+                            {{ $event->event_date->format('j M Y') }}
+                            at {{ substr($event->start_time, 0, 5) }}
+                        </p>
+                        <p class="fw-semibold mb-1">
+                            MVR {{ number_format((float) $event->price, 2) }}
+                        </p>
+                    </div>
+
+                    <div class="card-footer bg-transparent">
+                        <a href="{{ route('park.events.show', $event) }}"
+                            class="btn btn-sm btn-outline-primary">Details</a>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    </div>
+@endif
+
+
+
+
 <div class="row g-3">
     <div class="col-md-4">
         <div class="card h-100 shadow-sm">

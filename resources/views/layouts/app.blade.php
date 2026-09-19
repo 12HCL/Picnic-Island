@@ -35,6 +35,13 @@
                      content (Safhaan). Add yours when your route exists - a link to a
                      route nobody has written yet is a 404 in the screenshots appendix.
                      Use route() names, not url(), so a renamed URL does not break the nav. --}}
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('content.map') ? 'active' : '' }}"
+                        href="{{ route('content.map') }}">Island map</a>
+                </li>
+
+
                 @auth
                     @if (auth()->user()->hasRole('visitor'))
                         <li class="nav-item">
