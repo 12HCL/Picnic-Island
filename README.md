@@ -7,6 +7,10 @@ Visitors browse the island, register an account and book across four services fr
 place. Staff manage their own service area, and administrators oversee users, promotions
 and reporting across all of them.
 
+📷 **[Screenshots of every screen, by role](docs/screenshots/)** — the whole system
+captured from a running instance, including the refusals that evidence its business rules,
+if you would rather look than install.
+
 ## Modules
 
 The system is divided into five modules, one per group member.
@@ -94,6 +98,7 @@ app/Http/Controllers/   one subdirectory per module
 routes/modules/         one route file per module
 database/migrations/    schema, built to the agreed master design
 resources/views/        Blade templates; shared layout and components at the top level
+docs/screenshots/       every screen, by role, captured from a running instance
 ```
 
 ## Authors
