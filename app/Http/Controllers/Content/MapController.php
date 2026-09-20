@@ -7,9 +7,7 @@ use App\Models\MapLocation;
 use Illuminate\View\View;
 
 /**
- * Module 5 — Content, Map & Reporting. Owner: Ahmed Safhaan.
- * BUILD_CONTRACT.md §3, Module 5 · UC-08.
- *
+ * Module 5 - Content, Map & Reporting. Owner: Ahmed Safhaan.
  * The public island map. One static image with clickable markers positioned by
  * percentage, so it works at any screen size and needs no maps API — the Dean
  * explicitly excluded one.

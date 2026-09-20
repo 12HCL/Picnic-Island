@@ -17,11 +17,11 @@ The system is divided into five modules, one per group member.
 
 | # | Module | Scope | Owner |
 |---|---|---|---|
-| 1 | Auth, Roles & Admin | Registration, login, the five-role permission model, user administration, reporting | Mohamed Faain |
+| 1 | Auth, Roles & Admin , Reporting | Registration, login, the five-role permission model, user administration, reporting | Mohamed Faain |
 | 2 | Hotel | Rooms, availability search, bookings, payments, staff desk | Ahmed Raafil. |
 | 3 | Ferry | Routes, schedules, ticketing, boarding manifests, ticket validation | Ali Naayif |
 | 4 | Theme Park & Beach | Activities, events, gate sales, capacity limits, ticket validation | Ahmed Malaaz Mohamed |
-| 5 | Content, Map & Reporting | Public home page, island map, promotions | Ahmed Safhaan |
+| 5 | Content, Map  | Public home page, island map, promotions | Ahmed Safhaan |
 
 Routes are split one file per module under `routes/modules/`, so five people can work
 without competing for a single route file.
